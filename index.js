@@ -26,7 +26,6 @@ Module.prototype.invalidate = function(path) {
 		if ( this.parent === null && this === module )
 			return;
 		this._exports = null;
-		this.loaded = false;
 	}
 }
 
@@ -35,6 +34,7 @@ function reload(mod) {
 
 	// console.log('reload()');
 	mod._exports = {}; // resets _exports
+	mod.loaded = false;
 	mod.load(mod.filename);
 }
 
