@@ -118,6 +118,13 @@ var bar = foo.bar;
 In this case, `bar` will always refers to the initial `foo.bar` value. To avoid this, always refer `bar` using `foo.bar`.
 
 
+#### Invalidated modules may survive with new sub-module versions
+Any reference to an invalidated module will continue to live with its new version.
+
+```
+TBD example  
+```
+
 ## To be done
 
 1. make module-invalidate enable for selected modules
