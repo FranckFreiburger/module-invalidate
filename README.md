@@ -5,6 +5,28 @@ Invalidate node.js modules loaded through `require()`
 
 ## Examples
 
+### 1
+
+```JavaScript
+require('module-invalidate');
+
+var foo = require('foo');
+
+console.log(foo.bar);
+
+// -- foo module has changed --
+
+myFooBarSystem.on('reloadModules', function() {
+	
+	module.constructor.invalidate();
+
+	console.log(foo.bar); // a new value
+})
+```
+
+
+### 2
+
 ```JavaScript
 require('module-invalidate');
 
@@ -54,7 +76,7 @@ Invalidates all nodejs-non-internal modules.
 
 Invalidates the module `module`.
 
-`path` (optional): Invalidates the specified module (same syntax and same context as `require()`)
+`path` (optional): Invalidates the specified module (same syntax and context than `require()`)
 
 
 
@@ -70,7 +92,7 @@ Invalidates the module `module`.
 
 #### ownKeys is not supported
 
-Reflect.ownKeys(), Object.keys(), for-in loop, console.log(), ... are not available on the module exports.
+Reflect.ownKeys(), Object.keys(), for-in loop, console.log(), ... are not available on the module exports (only).
 eg.
 ```
 Object.keys(require('foo.js'));
@@ -85,6 +107,12 @@ var foo = require('foo.js');
 var bar = foo.bar;
 ```
 In this case, `bar` will always refers to the initial `foo.bar` value. To avoid this, always refer `bar` using `foo.bar`.
+
+
+## To be done
+
+1. make module-invalidate enable for selected modules
+1. allow module to be aware of their invalidation.
 
 
 ## Credits
