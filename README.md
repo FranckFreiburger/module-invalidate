@@ -1,5 +1,5 @@
 # module-invalidate
-Invalidate node.js modules loaded through require()
+Invalidate node.js modules loaded through `require()`
 
 
 ## Examples
@@ -63,14 +63,16 @@ Invalidates the module `module`.
 
 ## Caveat
 
-- Object.keys(), for-in loop, console.log(), ... are not available on the module exports.
+#### ownKeys is not supported
+
+Object.keys(), for-in loop, console.log(), ... are not available on the module exports.
 eg.
 ```
 Object.keys(require('foo.js'));
 ```
 will throw a `TypeError: ownKeys not implemented` exception.
 
-- Only direct variable access is handled:
+#### Only direct variable access is handled
 ```  
 var foo = require('foo.js');
 var bar = foo.bar;
