@@ -35,9 +35,15 @@ require('fs').unlinkSync(tmp_modulePath);
 
 ## API
 
+##### require('module-invalidate')
+
+Enable the module-invalidate mechanism.
+Any nodejs-non-internal module loaded after this call are handeled by this library.
+
+
 ##### Module.invalidate()
 
-Invalidates all nodejs-internal modules.
+Invalidates all nodejs-non-internal modules.
 
 `Module` is available with `module.constructor` or `require('module')`
 
@@ -52,12 +58,25 @@ Invalidates the module `module`.
 ## How it works
 
 1. `Module.prototype.exports` is overridden by a ES6 Proxy that handle all accesses to module exports.
-1. When a module is invalidated, it is marked as *invalidated* and is then reloaded on the next access.
+1. When a module is invalidated, it is marked as *invalidated* and is then reloaded on the next access (lazily).
 
 
 ## Caveat
 
 - Object.keys(), for-in loop, console.log(), ... are not available on the module exports.
+eg.
+```
+Object.keys(require('foo.js'));
+```
+will throw a `TypeError: ownKeys not implemented` exception.
+
+- Only direct variable access is handled:
+```  
+var foo = require('foo.js');
+var bar = foo.bar;
+```
+In this case, `bar` will always refers to the initial `foo.bar` value. To avoid this, always refer `bar` using `foo.bar`.
+
 
 ## Credits
 
