@@ -2,6 +2,10 @@
 Invalidate node.js modules loaded through `require()`
 
 
+## Install
+
+`npm install --save FranckFreiburger/module-invalidate`
+
 
 ## Examples
 
