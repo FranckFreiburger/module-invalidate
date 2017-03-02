@@ -4,7 +4,6 @@ Invalidate node.js modules loaded through `require()`
 
 ## Description
 `module-invalidate` allows you to invalidate a given module (or all modules) and make it automatically reloaded on further access.  
-Loaded module (using `require()`) are handled by a No-op forwarding ES6 Proxy that handle module access.  
 
 
 ## Install
