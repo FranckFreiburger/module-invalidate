@@ -197,7 +197,6 @@ TBD example
 
 ## To be done
 
-1. make module-invalidate enable for selected modules
 1. allow module to be aware of their invalidation.
 
 
