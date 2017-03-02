@@ -46,7 +46,7 @@ console.log( myModule.count() ); // 1
 
 ### example: invalidate module on modification
 
-```
+```JavaScript
 const fs = require('fs');
 
 var myModule = require('./myModule.js');
