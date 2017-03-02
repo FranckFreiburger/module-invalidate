@@ -8,5 +8,9 @@
   "license": "MIT",
   "devDependencies": {
     "ffi": "^2.2.0"
+  },
+  "repository" : {
+    "type" : "git",
+    "url" : "git@github.com:FranckFreiburger/module-invalidate.git"
   }
 }
