@@ -40,49 +40,49 @@ function createProxy(mod) {
 	
 	return new Proxy(function() {}, {
 
-		getPrototypeOf: (target) => {
+		getPrototypeOf: function(target) {
 			
 			mod._exports === null && reload(mod);
 			return Reflect.getPrototypeOf(mod._exports);
 		},
 		
-		setPrototypeOf: (target, prototype) => {
+		setPrototypeOf: function(target, prototype) {
 			
 			mod._exports === null && reload(mod);
 			return Reflect.setPrototypeOf(mod._exports, prototype);
 		},
 		
-		isExtensible: (target) => {
+		isExtensible: function(target) {
 			
 			mod._exports === null && reload(mod);
 			return Reflect.isExtensible(mod._exports);
 		},
 		
-		preventExtensions: (target) => {
+		preventExtensions: function(target) {
 			
 			mod._exports === null && reload(mod);
 			return Reflect.preventExtensions(mod._exports);
 		},
 		
-		getOwnPropertyDescriptor: (target, prop) => {
+		getOwnPropertyDescriptor: function(target, prop) {
 			
 			mod._exports === null && reload(mod);
 			return Reflect.getOwnPropertyDescriptor(mod._exports, prop);
 		},
 		
-		defineProperty: (target, property, descriptor) => {
+		defineProperty: function(target, property, descriptor) {
 			
 			mod._exports === null && reload(mod);
 			return Reflect.defineProperty(mod._exports, property, descriptor);
 		},
 		
-		has: (target, prop) => {
+		has: function(target, prop) {
 			
 			mod._exports === null && reload(mod);
 			return Reflect.has(mod._exports, prop);
 		},
 		
-		get: (target, property, receiver) => {
+		get: function(target, property, receiver) {
 			
 			mod._exports === null && reload(mod);
 			
@@ -93,19 +93,19 @@ function createProxy(mod) {
 			return Reflect.get(mod._exports, property, receiver);
 		},
 		
-		set: (target, property, value, receiver) => {
+		set: function(target, property, value, receiver) {
 			
 			mod._exports === null && reload(mod);
 			return Reflect.set(mod._exports, property, value, receiver);
 		},
 		
-		deleteProperty: (target, property) => {
+		deleteProperty: function(target, property) {
 			
 			mod._exports === null && reload(mod);
 			return Reflect.deleteProperty(mod._exports, property);
 		},
 		
-		ownKeys: (target) => {
+		ownKeys: function(target) {
 			
 			mod._exports === null && reload(mod);
 			// see https://tc39.github.io/ecma262/#sec-invariants-of-the-essential-internal-methods
@@ -114,13 +114,13 @@ function createProxy(mod) {
 			//return Reflect.ownKeys(mod._exports);
 		},
 		
-		apply: (target, thisArg, argumentsList) => {
+		apply: function(target, thisArg, argumentsList) {
 			
 			mod._exports === null && reload(mod);
 			return Reflect.apply(mod._exports, thisArg, argumentsList);
 		},
 		
-		construct: (target, argumentsList, newTarget) => {
+		construct: function(target, argumentsList, newTarget) {
 			
 			mod._exports === null && reload(mod);
 			return Reflect.construct(mod._exports, argumentsList, newTarget);
