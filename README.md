@@ -25,6 +25,7 @@ exports.count() {
 }
 ```
 
+main module `./index.js`
 ```JavaScript
 require('module-invalidate');
 
