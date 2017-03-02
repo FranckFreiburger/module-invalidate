@@ -245,7 +245,7 @@ var bar = foo.bar;
 In this case, `bar` will always refers to the initial `foo.bar` value. To avoid this, always refer `bar` using `foo.bar`.
 
 
-#### Invalidated modules may survive with the new child-module version
+#### Invalidated modules will survive with the new child-module version
 In a module, `module.exports` will always refers to the latest version of the module.
 
 
