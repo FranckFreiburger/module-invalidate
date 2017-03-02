@@ -12,5 +12,10 @@
   "repository" : {
     "type" : "git",
     "url" : "git@github.com:FranckFreiburger/module-invalidate.git"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/FranckFreiburger/module-invalidate/issues"
+  },
+  "homepage": "https://github.com/FranckFreiburger/module-invalidate#readme"
+
 }
