@@ -21,13 +21,13 @@ require('module-invalidate');
 
 var foo = require('foo');
 
-console.log(foo.bar);
+console.log(foo.bar); // a value
 
-// -- foo module has changed --
+// -- 'foo' module has changed --
 
 myFooBarSystem.on('reloadModules', function() {
 	
-	module.constructor.invalidate();
+	module.constructor.invalidateByExports(foo);
 
 	console.log(foo.bar); // a new value
 })
@@ -43,6 +43,7 @@ require('module-invalidate');
 var tmp_modulePath = require('path').join(__dirname, 'tmp_module.js');
 
 require('fs').writeFileSync(tmp_modulePath, `
+	module.invalidable = true;
 	exports.a = 1;
 `);
 
@@ -52,11 +53,12 @@ var tmp_module = require('./tmp_module.js');
 console.log(tmp_module.a); // 1
 
 require('fs').writeFileSync(tmp_modulePath, `
+	module.invalidable = true;
 	exports.a = 2;
 `);
 
 
-module.invalidate('./tmp_module.js');
+module.invalidateByPath('./tmp_module.js'); // or module.constructor.invalidateByExports(tmp_module)
 
 console.log(tmp_module.a); // 2
 
@@ -69,29 +71,67 @@ require('fs').unlinkSync(tmp_modulePath);
 
 
 ##### require('module-invalidate')
-
-Enable the module-invalidate mechanism.
+Enable the module-invalidate mechanism.  
 Any nodejs-non-internal module loaded after this call are handeled by this library.
 
 
+##### module.invalidable
+This property controls whether the module can be invalidated. By default, modules are not invalidable. This property has to be set before exporting.
+
+###### Example:
+module `./myModule.js`
+```JavaScript
+module.invalidable = true;
+module.exports = {
+	foo: function() {}
+}
+```
+
+##### module.invalidateByPath(path)
+Invalidates the specified module (same syntax and context than `require()`).
+
+###### Example:
+```JavaScript
+require('module-invalidate');
+var myModule = require('./myModule.js');
+module.invalidateByPath('./myModule.js');
+```
+
+
+##### module.invalidateByExports(exports)
+Invalidates the module by giving its exported object.
+
+###### Example:
+```JavaScript
+require('module-invalidate');
+var myModule = require('./myModule.js');
+module.invalidateByExports(myModule);
+```
+
+
 ##### Module.invalidate()
+Invalidates all nodejs-non-internal modules.  
+`Module` is available with `module.constructor` or `require('module')`.
 
-Invalidates all nodejs-non-internal modules.
+###### Example:
+```JavaScript
+require('module-invalidate');
+module.constructor.invalidate();
+```
 
-`Module` is available with `module.constructor` or `require('module')`
 
-
-##### module.invalidate([path])
-
+##### module.invalidate()
 Invalidates the module `module`.
 
-`path` (optional): Invalidates the specified module (same syntax and context than `require()`)
-
+###### Example:
+```JavaScript
+module.invalidate();
+```
 
 
 ## How it works
 
-1. `Module.prototype.exports` is overridden by a ES6 Proxy that handle all accesses to module exports.
+1. `Module.prototype.exports` is overridden by a No-op forwarding ES6 Proxy that handle all accesses to module exports.
 1. When a module is invalidated, it is marked as *invalidated* and is then reloaded on the next access (lazily).
 
 

@@ -3,8 +3,10 @@
   "version": "0.9.0",
   "description": "invalidate required modules",
   "main": "index.js",
-  "scripts": {
-  },
+  "scripts": {},
   "author": "Franck Freiburger",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "ffi": "^2.2.0"
+  }
 }

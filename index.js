@@ -1,43 +1,40 @@
 'use strict';
 
 // see https://github.com/nodejs/node/blob/master/lib/module.js
-var Module = module.constructor;
-
+// and https://github.com/nodejs/node/blob/master/lib/internal/module.js
+const Module = module.constructor;
 
 Module.invalidate = function() {
 	
-	for ( var id in this._cache )
-		if ( 'invalidate' in this._cache[id] )
-			this._cache[id].invalidate();
-		
-	global.gc && global.gc();
+	for ( var id in Module._cache )
+		if ( 'invalidate' in Module._cache[id] )
+			Module._cache[id].invalidate();
 }
 
+Module.invalidateByExports = function(exports) {
+	
+	for ( var id in Module._cache )
+		if ( Module._cache[id].exports === exports )
+			Module._cache[id].invalidate();
+}
 
-Module.prototype.invalidate = function(path) {
+Module.prototype.invalidateByPath = function(path) {
 	
-	if ( path !== undefined ) {
-	
-		var id = Module._resolveFilename(path, this);
-		Module._cache[id].invalidate();
-	} else {
-		
-		// do not invalidate main module nor this module
-		if ( this.parent === null && this === module )
-			return;
+	Module._cache[Module._resolveFilename(path, this, this.parent === null)].invalidate();
+}
+
+Module.prototype.invalidate = function() {
+
+	if ( this.invalidable )
 		this._exports = null;
-	}
 }
-
 
 function reload(mod) {
 
-	// console.log('reload()');
 	mod._exports = {}; // resets _exports
 	mod.loaded = false;
 	mod.load(mod.filename);
 }
-
 
 function createProxy(mod) {
 	
@@ -95,9 +92,9 @@ function createProxy(mod) {
 			
 			// see http://stackoverflow.com/questions/42496414/illegal-invocation-error-using-es6-proxy-and-node-js
 			// see https://github.com/nodejs/node/issues/11629
-			var val = Reflect.get(mod._exports, property, receiver);
-			return typeof(val) === 'function' ? val.bind(mod._exports) : val;
-			//return val;
+			//var val = Reflect.get(mod._exports, property, receiver);
+			//return typeof(val) === 'function' ? val.bind(mod._exports) : val;
+			return Reflect.get(mod._exports, property, receiver);
 		},
 		
 		set: (target, property, value, receiver) => {
@@ -125,7 +122,7 @@ function createProxy(mod) {
 		
 		apply: (target, thisArg, argumentsList) => {
 			
-			// console.log('P apply');
+			//console.log('P apply', mod._exports.name);
 			
 			mod._exports === null && reload(mod);
 			return Reflect.apply(mod._exports, thisArg, argumentsList);
@@ -141,36 +138,37 @@ function createProxy(mod) {
 	});
 }
 
+Object.defineProperty(Module.prototype, 'invalidable', {
+	get: function() {
+		
+		return !!this._proxy;
+	},
+	set: function(value) {
+		
+		if ( this._proxy ) {
+			
+			if ( !value )
+				this._proxy = null;
+		} else {
+			
+			if ( value )
+				this._proxy = createProxy(this);
+		}
+	}
+});
+
+
 Object.defineProperty(Module.prototype, 'exports', {
 	get: function() {
-
-		// not primitive value ?
-		if ( this._proxy !== null )
-			return this._proxy;
 		
-		// invalidated ?
-		if ( this._exports === null )
-			reload(this);
-		
-		// TBD check if this._exports is still a primitive
-		// return the primitive value
-		return this._exports;
+		return this._proxy ? this._proxy : this._exports;
 	},
 	set: function(value) {
 
 		this._exports = value;
-
-		var valueType = typeof value;
-		if ( valueType !== 'function' && valueType !== 'object' || valueType === null ) {
-			
-			this._proxy = null;
-			return;
-		}
-
-		if ( !this._proxy )
-			this._proxy = createProxy(this);
 	}
 });
+
 
 /* test
 Module.prototype._unload = function() {
