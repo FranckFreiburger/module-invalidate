@@ -25,8 +25,22 @@ Module.prototype.invalidateByPath = function(path) {
 
 Module.prototype.invalidate = function() {
 
-	if ( this.invalidable )
-		this._exports = null;
+	if ( !this.invalidable )
+		return;
+	
+	if ( '_invalidateCallbacks' in this ) {
+		
+		this._invalidateCallbacks.forEach(callback => callback(this._exports));
+		this._invalidateCallbacks.clear();
+	}
+	
+	this._exports = null;
+}
+
+Module.prototype.onInvalidate = function(callback) {
+	
+	var invalidateCallbacks = this._invalidateCallbacks || (this._invalidateCallbacks = new Set);
+	return invalidateCallbacks.add(callback).delete.bind(invalidateCallbacks, callback);
 }
 
 function reload(mod) {
