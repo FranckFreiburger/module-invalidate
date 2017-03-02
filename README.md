@@ -130,7 +130,7 @@ Any nodejs-non-internal module loaded after this call can be handled by this lib
 
 
 ##### module.invalidable
-This property controls whether the module can be invalidated. By default, modules are not invalidable. This property has to be set before exporting.
+This property controls whether the module can be invalidated. By default, modules are not invalidable. This property must be set before exporting.
 
 ###### Example:
 module `./myModule.js`
@@ -142,7 +142,7 @@ module.exports = {
 ```
 
 ##### module.invalidateByPath(path)
-Invalidates the specified module (same syntax and context than `require()`).
+Invalidates the specified module (same syntax and context than `require()`). The module should have been flagged as invalidable using `module.invaluable`.
 
 ###### Example:
 ```JavaScript
@@ -153,7 +153,7 @@ module.invalidateByPath('./myModule.js');
 
 
 ##### Module.invalidateByExports(exports)
-Invalidates the module by giving its exported object.
+Invalidates the module by giving its exported object. The module should have been flagged as invalidable using `module.invaluable`.
 
 ###### Example:
 ```JavaScript
@@ -164,8 +164,7 @@ module.constructor.invalidateByExports(myModule);
 
 
 ##### Module.invalidate()
-Invalidates all nodejs-non-internal modules.  
-
+Invalidates all nodejs-non-internal modules. Only process modules that have been flagged as invalidable using `module.invaluable`.
 
 ###### Example:
 ```JavaScript
@@ -175,7 +174,7 @@ module.constructor.invalidate();
 
 
 ##### module.invalidate()
-Invalidates the module `module`.
+Invalidates the module `module`. The module should have been flagged as invalidable using `module.invaluable`.
 
 ###### Example:
 ```JavaScript
