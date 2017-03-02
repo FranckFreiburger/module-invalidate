@@ -215,6 +215,11 @@ Invalidates the module `module`. The module should have been flagged as invalida
 module.invalidate();
 ```
 
+##### module.onInvalidate(callback)
+callback: `function(immutable_exports)`
+
+Register a callback that will be called when the module is invalidated. The `immutable_exports` is a permanent reference to the current module.exports .
+
 
 ## How it works
 
@@ -283,8 +288,6 @@ output:
 
 
 ## To be done
-
-1. allow module to be aware of their invalidation.
 
 
 ## Credits
