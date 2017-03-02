@@ -14,13 +14,16 @@ Loaded module (using `require()`) are handled by a No-op forwarding ES6 Proxy th
 
 ## Examples
 
-### 1
+
+### example: simple case
 
 module `./myModule.js`
 ```JavaScript
 module.invalidable = true;
+
 var count = 0;
-exports.count() {
+exports.count = function() {
+
 	return count++;
 }
 ```
@@ -41,7 +44,26 @@ console.log( myModule.count() ); // 1
 ```
 
 
-### 2
+### example: invalidate module on modification
+
+```
+const fs = require('fs');
+
+var myModule = require('./myModule.js');
+
+fs.watch(require.resolve('./myModule.js'), function() {
+	
+	module.invalidateByPath('./myModule.js');
+});
+
+setInterval(function() {
+	
+	console.log(myModule.count());
+}, 1000);
+```
+
+
+### example:
 
 ```JavaScript
 require('module-invalidate');
@@ -61,7 +83,7 @@ myFooBarSystem.on('reloadModules', function() {
 ```
 
 
-### 3
+### example: 
 
 ```JavaScript
 require('module-invalidate');
@@ -92,6 +114,8 @@ console.log(tmp_module.a); // 2
 require('fs').unlinkSync(tmp_modulePath);
 
 ```
+
+
 
 
 ## API
