@@ -152,7 +152,7 @@ module.invalidateByPath('./myModule.js');
 
 
 ##### Module.invalidateByExports(exports)
-Invalidates the module by giving its exported object. The module should have been flagged as invalidable using `module.invaluable`.
+Invalidates the module by giving its exported object. The module should have been flagged as invalidable using `module.invaluable`.  
 
 ###### Example:
 ```JavaScript
@@ -160,6 +160,41 @@ require('module-invalidate');
 var myModule = require('./myModule.js');
 module.constructor.invalidateByExports(myModule);
 ```
+
+`invalidateByExports()` only invalidates one module
+module `B.js`
+```
+	module.invalidable = true;
+	console.log('load B');
+	module.exports = {
+		foo: 123
+	}
+```
+
+module `A.js`
+```
+	module.invalidable = true;
+	console.log('load A');
+	module.exports = require('./B.js');
+
+```
+
+main module `index.js`
+```
+	require('module-invalidate');
+	var a = require('./A.js');
+	console.log('invalidate');
+	module.constructor.invalidateByExports(a);
+	var tmp = a.foo;
+```	
+
+output:
+```	
+load A
+load B
+invalidate
+load A
+```	
 
 
 ##### Module.invalidate()
@@ -210,12 +245,42 @@ var bar = foo.bar;
 In this case, `bar` will always refers to the initial `foo.bar` value. To avoid this, always refer `bar` using `foo.bar`.
 
 
-#### Invalidated modules may survive with new sub-module versions
-Any reference to an invalidated module will continue to live with its new version.
+#### Invalidated modules may survive with the new child-module version
+In a module, `module.exports` will always refers to the latest version of the module.
+
+
+module `./child.js`
+```
+module.invalidable = true;
+module.exports = {};
+
+setInterval(function() {
+	console.log(module.exports.foo);
+}, 1000);
 
 ```
-TBD example  
+
+main module `index.js`
 ```
+require('module-invalidate');
+
+var child = require('./child.js');
+child.foo = 1;
+module.constructor.invalidateByExports(child);
+child.foo = 2;
+```
+
+output:
+```
+2
+2
+2
+2
+2
+...
+
+```
+
 
 ## To be done
 
