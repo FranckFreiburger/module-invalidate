@@ -16,6 +16,32 @@ Loaded module (using `require()`) are handled by a No-op forwarding ES6 Proxy th
 
 ### 1
 
+module `./myModule.js`
+```JavaScript
+module.invalidable = true;
+var count = 0;
+exports.count() {
+	return count++;
+}
+```
+
+```JavaScript
+require('module-invalidate');
+
+var myModule = require('./myModule.js');
+
+console.log( myModule.count() ); // 0
+console.log( myModule.count() ); // 1
+
+module.constructor.invalidateByExports(myModule);
+
+console.log( myModule.count() ); // 0
+console.log( myModule.count() ); // 1
+```
+
+
+### 2
+
 ```JavaScript
 require('module-invalidate');
 
@@ -34,7 +60,7 @@ myFooBarSystem.on('reloadModules', function() {
 ```
 
 
-### 2
+### 3
 
 ```JavaScript
 require('module-invalidate');
@@ -69,10 +95,13 @@ require('fs').unlinkSync(tmp_modulePath);
 
 ## API
 
+In the following API, `Module` refers to the Module constructor, available with `module.constructor` or `require('Module')`.  
+And `module` refers to a module instance, available in each module with `module`.
+
 
 ##### require('module-invalidate')
 Enable the module-invalidate mechanism.  
-Any nodejs-non-internal module loaded after this call are handeled by this library.
+Any nodejs-non-internal module loaded after this call can be handled by this library.
 
 
 ##### module.invalidable
@@ -98,20 +127,20 @@ module.invalidateByPath('./myModule.js');
 ```
 
 
-##### module.invalidateByExports(exports)
+##### Module.invalidateByExports(exports)
 Invalidates the module by giving its exported object.
 
 ###### Example:
 ```JavaScript
 require('module-invalidate');
 var myModule = require('./myModule.js');
-module.invalidateByExports(myModule);
+module.constructor.invalidateByExports(myModule);
 ```
 
 
 ##### Module.invalidate()
 Invalidates all nodejs-non-internal modules.  
-`Module` is available with `module.constructor` or `require('module')`.
+
 
 ###### Example:
 ```JavaScript
