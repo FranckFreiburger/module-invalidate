@@ -72,8 +72,6 @@ function createProxy(mod) {
 		
 		defineProperty: (target, property, descriptor) => {
 			
-			// console.log('P defineProperty', property)
-			
 			mod._exports === null && reload(mod);
 			return Reflect.defineProperty(mod._exports, property, descriptor);
 		},
@@ -86,8 +84,6 @@ function createProxy(mod) {
 		
 		get: (target, property, receiver) => {
 			
-			// console.log('P get', property)
-			
 			mod._exports === null && reload(mod);
 			
 			// see http://stackoverflow.com/questions/42496414/illegal-invocation-error-using-es6-proxy-and-node-js
@@ -98,8 +94,6 @@ function createProxy(mod) {
 		},
 		
 		set: (target, property, value, receiver) => {
-			
-			// console.log('P set', property)
 			
 			mod._exports === null && reload(mod);
 			return Reflect.set(mod._exports, property, value, receiver);
@@ -122,15 +116,11 @@ function createProxy(mod) {
 		
 		apply: (target, thisArg, argumentsList) => {
 			
-			//console.log('P apply', mod._exports.name);
-			
 			mod._exports === null && reload(mod);
 			return Reflect.apply(mod._exports, thisArg, argumentsList);
 		},
 		
 		construct: (target, argumentsList, newTarget) => {
-			
-			// console.log('P construct');
 			
 			mod._exports === null && reload(mod);
 			return Reflect.construct(mod._exports, argumentsList, newTarget);
