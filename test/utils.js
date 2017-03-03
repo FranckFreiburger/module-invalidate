@@ -20,16 +20,30 @@ process.on('SIGINT', onEnd);
 process.on('uncaughtException', onEnd);
 
 
-exports.TmpModule = function(moduleContent) {
+exports.TmpModule = function(moduleContent, opts) {
 	
 	moduleIndex++;
-	var moduleFilename = path.join(__dirname, `_tmp_mod${moduleIndex}.js`);
-
 	var moduleContentFct = null;
+
+	this.filename = path.join(__dirname, `_tmp_mod${moduleIndex}.js`);
 	
-	this.module = null;
+	Object.defineProperty(this, 'module', {
+		
+		get: () => {
+			
+			for ( var filename in Module._cache )
+				if ( filename === this.filename )
+					return Module._cache[filename];
+			return null;
+		}
+	})
 	
-	this.set = function(moduleContent) {
+	this.load = function() {
+
+		require(this.filename);
+	}
+	
+	this.set = function(moduleContent, opts = {}) {
 
 		if ( typeof moduleContent === 'function' )
 			moduleContentFct = moduleContent;
@@ -39,23 +53,17 @@ exports.TmpModule = function(moduleContent) {
 			
 		moduleContent = moduleContentFct();
 		
-		fs.writeFileSync(moduleFilename, moduleContent);
-		tmpFileList.add(moduleFilename);
+		fs.writeFileSync(this.filename, moduleContent);
+		tmpFileList.add(this.filename);
 		
-		if ( this.module === null ) {
-		
-			var exports = require(moduleFilename);
-
-			for ( var filename in Module._cache )
-				if ( Module._cache[filename].exports === exports )
-					this.module = Module._cache[filename];
-		}
+		if ( this.module === null && opts.autoLoad !== false )
+			this.load();
 		
 		return this;
 	}
 	
 	if ( moduleContent !== undefined )
-		this.set(moduleContent);
+		this.set(moduleContent, opts);
 }
 	
 	
