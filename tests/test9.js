@@ -1,7 +1,12 @@
 require('../index.js');
 
-
-
 var child = require('./test9_child.js');
+console.log(child.foo)
 
-module.unloadByPath('./test9_child.js');
+setTimeout(function() {
+
+	module.unloadByPath('./test9_child.js');
+	
+	console.log(child.foo);
+	
+}, 500);

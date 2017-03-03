@@ -1,5 +1,9 @@
+console.log('load child')
+
 module.invalidable = true;
-module.exports = {};
+module.exports = {
+	foo: 'bar'
+};
 
 var interval = setInterval(function() {
 	

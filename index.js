@@ -175,7 +175,12 @@ Object.defineProperty(Module.prototype, 'exports', {
 
 Module.prototype.unload = function() {
 
+	var exports = this._exports;
 	this.invalidate();
+	this._exports = exports;
+	this.invalidable = false;
+
+	delete Module._cache[this.filename];
 	
 	// remove this module from all module children	
 	for ( var filename in Module._cache ) {
@@ -186,8 +191,6 @@ Module.prototype.unload = function() {
 			children.splice(pos);
 	}
 
-	delete Module._cache[this.filename];
-	
 	this.parent = null;
 
 	this.children.length = 0;
