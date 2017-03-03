@@ -123,12 +123,12 @@ In the following API, `Module` refers to the Module constructor, available with 
 And `module` refers to a module instance, available in each module with `module`.
 
 
-#### require('module-invalidate')
+#### `require('module-invalidate')`
 Enable the module-invalidate mechanism.  
 Any nodejs-non-internal module loaded after this call can be handled by this library.
 
 
-#### module.invalidable
+#### `module.invalidable`
 This property controls whether the module can be invalidated. By default, modules are not invalidable. This property must be set before exporting.
 
 ###### Example:
@@ -140,7 +140,7 @@ module.exports = {
 }
 ```
 
-#### module.invalidateByPath(path)
+#### `module.invalidateByPath(path)`
 Invalidates the specified module by its path (same syntax and context than `require()`). The module should have been flagged as invalidable using `module.invaluable`.
 
 ###### Example:
@@ -151,7 +151,7 @@ module.invalidateByPath('./myModule.js');
 ```
 
 
-#### Module.invalidateByExports(exports)
+#### `Module.invalidateByExports(exports)`
 Invalidates the module by giving its exported object. The module should have been flagged as invalidable using `module.invaluable`.  
 
 ###### Example:
@@ -197,7 +197,7 @@ load A
 ```	
 
 
-#### Module.invalidate()
+#### `Module.invalidate()`
 Invalidates all nodejs-non-internal modules. Only process modules that have been flagged as invalidable using `module.invaluable`.
 
 ###### Example:
@@ -207,7 +207,7 @@ module.constructor.invalidate();
 ```
 
 
-#### module.invalidate()
+#### `module.invalidate()`
 Invalidates the module `module`. The module should have been flagged as invalidable using `module.invaluable`.
 
 ###### Example:
@@ -215,19 +215,19 @@ Invalidates the module `module`. The module should have been flagged as invalida
 module.invalidate();
 ```
 
-#### module.unload()
+#### `module.unload()`
 Definitely unloads the module `module`.
 
 
-#### module.unloadByPath(path)
+#### `module.unloadByPath(path)`
 Definitely unloads the module by its path (same syntax and context than `require()`).
 
 
-#### Module.unloadByExports(exports)
+#### `Module.unloadByExports(exports)`
 Definitely unloads the module by giving its exported object.
 
 
-#### module.onInvalidate(callback)
+#### `module.onInvalidate(callback)`
 callback: `function(immutable_exports)`
 
 Register a callback that will be called when the module is invalidated. The `immutable_exports` is a permanent reference to the current module.exports .  
@@ -299,9 +299,6 @@ output:
 ...
 
 ```
-
-
-## To be done
 
 
 ## Credits
