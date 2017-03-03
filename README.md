@@ -218,7 +218,9 @@ module.invalidate();
 ##### module.onInvalidate(callback)
 callback: `function(immutable_exports)`
 
-Register a callback that will be called when the module is invalidated. The `immutable_exports` is a permanent reference to the current module.exports .
+Register a callback that will be called when the module is invalidated. The `immutable_exports` is a permanent reference to the current module.exports .  
+`onInvalidate` returns a function that unregisters the callback.
+
 
 
 ## How it works
