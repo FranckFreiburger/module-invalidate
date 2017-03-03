@@ -6,16 +6,16 @@ const Module = module.constructor;
 
 Module.invalidate = function() {
 	
-	for ( var id in Module._cache )
-		if ( 'invalidate' in Module._cache[id] )
-			Module._cache[id].invalidate();
+	for ( var filename in Module._cache )
+		if ( 'invalidate' in Module._cache[filename] )
+			Module._cache[filename].invalidate();
 }
 
 Module.invalidateByExports = function(exports) {
 	
-	for ( var id in Module._cache )
-		if ( Module._cache[id].exports === exports )
-			Module._cache[id].invalidate();
+	for ( var filename in Module._cache )
+		if ( Module._cache[filename].exports === exports )
+			Module._cache[filename].invalidate();
 }
 
 Module.prototype.invalidateByPath = function(path) {
@@ -178,9 +178,9 @@ Module.prototype.unload = function() {
 	this.invalidate();
 	
 	// remove this module from all module children	
-	for ( var id in Module._cache ) {
+	for ( var filename in Module._cache ) {
 		 
-		var children = Module._cache[id].children;
+		var children = Module._cache[filename].children;
 		var pos = children.indexOf(this);
 		if ( pos !== -1 )
 			children.splice(pos);
@@ -207,7 +207,7 @@ Module.prototype.unloadByPath = function(path) {
 
 Module.unloadByExports = function(exports) {
 	
-	for ( var id in Module._cache )
-		if ( Module._cache[id].exports === exports )
-			Module._cache[id].unload();
+	for ( var filename in Module._cache )
+		if ( Module._cache[filename].exports === exports )
+			Module._cache[filename].unload();
 }
