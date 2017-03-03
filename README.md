@@ -14,7 +14,7 @@ Invalidate node.js modules loaded through `require()`
 ## Examples
 
 
-### example: simple case
+##### Example: simple case
 
 ###### module `./myModule.js`
 ```JavaScript
@@ -43,7 +43,7 @@ console.log( myModule.count() ); // 1
 ```
 
 
-### example: invalidate module on modification
+##### Example: invalidate module on modification
 
 ```JavaScript
 const fs = require('fs');
@@ -62,7 +62,7 @@ setInterval(function() {
 ```
 
 
-### example:
+##### Example:
 
 ```JavaScript
 require('module-invalidate');
@@ -82,7 +82,7 @@ myFooBarSystem.on('reloadModules', function() {
 ```
 
 
-### example: 
+##### Example:
 
 ```JavaScript
 require('module-invalidate');
@@ -248,7 +248,8 @@ Register a callback that will be called when the module is invalidated. The `imm
 #### ownKeys is not supported
 
 Reflect.ownKeys(), Object.keys(), for-in loop, console.log(), ... are not available on the module exports (only).
-eg.
+
+##### Example:
 ```
 Object.keys(require('foo.js'));
 ```
@@ -257,6 +258,8 @@ However for-of loop works properly.
 
 
 #### Only direct variable access is handled
+
+##### Example:
 ```  
 var foo = require('foo.js');
 var bar = foo.bar;
@@ -267,6 +270,7 @@ In this case, `bar` will always refers to the initial `foo.bar` value. To avoid 
 #### Invalidated modules will survive with the new child-module version
 In a module, `module.exports` will always refers to the latest version of the module.
 
+##### Example:
 
 ###### module `./child.js`
 ```
@@ -289,7 +293,7 @@ module.constructor.invalidateByExports(child);
 child.foo = 2;
 ```
 
-output:
+###### output
 ```
 2
 2
