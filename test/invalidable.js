@@ -61,7 +61,7 @@ describe('invalidable', function() {
 	});
 	
 	
-	it('module invalidable then non-invalidable from outside', function() {
+	it('module invalidable then non-invalidable then invalidable from outside', function() {
 		
 		var mod = utils.getTmpModule(`
 			var count = 0;
@@ -75,6 +75,9 @@ describe('invalidable', function() {
 		mod.invalidable = false;
 		module.invalidateByPath(mod.filename);
 		assert.equal(mod.exports.count(), 1);
+		mod.invalidable = true;
+		module.invalidateByPath(mod.filename);
+		assert.equal(mod.exports.count(), 0);
 	});
 
 	
