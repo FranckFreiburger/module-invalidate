@@ -129,7 +129,7 @@ Any nodejs-non-internal module loaded after this call can be handled by this lib
 
 
 #### `module.invalidable`
-This property controls whether the module can be invalidated. By default, modules are not invalidable. This property must be set before exporting.
+This property controls whether the module can be invalidated. By default, modules are not invalidable.
 
 ##### Example:
 ###### module `./myModule.js`
