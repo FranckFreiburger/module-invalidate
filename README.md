@@ -244,6 +244,11 @@ Register a callback that will be called when the module is invalidated. The `imm
 
 ## Caveat
 
+#### `typeof module.exports` is always 'function'
+
+Because the library is unable to know in advance what type of value will be assigned to `module.export`, it choose the most generic one.
+`(function(){}) instanceof Object === true`
+
 
 #### ownKeys is not supported
 
