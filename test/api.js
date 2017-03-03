@@ -47,7 +47,7 @@ describe('API basic tests', function() {
 		
 		var foo = 1;
 		
-		var mod = new utils.TmpModule().set(_ =>`
+		var mod = new utils.TmpModule(_ =>`
 			module.invalidable = true;
 			module.exports = {
 				foo: ${foo}
@@ -66,7 +66,7 @@ describe('API basic tests', function() {
 		
 		var count = 1;
 		
-		var mod = new utils.TmpModule().set(_ =>`
+		var mod = new utils.TmpModule(_ =>`
 			module.invalidable = true;
 			module.exports = {
 				a: {

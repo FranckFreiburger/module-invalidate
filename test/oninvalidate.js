@@ -8,7 +8,7 @@ describe('onInvalidate', function() {
 	
 	it('onInvalidate callback', function() {
 		
-		var mod = utils.getTmpModule(`
+		var mod = new utils.TmpModule(`
 			module.invalidable = true;
 			module.exports = function(callback) {
 				module.onInvalidate(callback);
@@ -16,13 +16,13 @@ describe('onInvalidate', function() {
 		`);
 		
 		var pass = 0;
-		mod.exports(function() {
+		mod.module.exports(function() {
 
 			pass++;
 		});
 		
-		module.invalidateByPath(mod.filename);
-		module.invalidateByPath(mod.filename);
+		module.invalidateByPath(mod.module.filename);
+		module.invalidateByPath(mod.module.filename);
 
 		assert.equal(pass, 1);
 	});
@@ -30,7 +30,7 @@ describe('onInvalidate', function() {
 
 	it('cancel onInvalidate', function() {
 		
-		var mod = utils.getTmpModule(`
+		var mod = new utils.TmpModule(`
 			module.invalidable = true;
 			module.exports = function(callback) {
 				var cancel = module.onInvalidate(callback);
@@ -39,13 +39,13 @@ describe('onInvalidate', function() {
 		`);
 		
 		var pass = 0;
-		mod.exports(function() {
+		mod.module.exports(function() {
 
 			pass++;
 		});
 		
-		module.invalidateByPath(mod.filename);
-		module.invalidateByPath(mod.filename);
+		module.invalidateByPath(mod.module.filename);
+		module.invalidateByPath(mod.module.filename);
 
 		assert.equal(pass, 0);
 	});
@@ -53,7 +53,7 @@ describe('onInvalidate', function() {
 
 	it('onInvalidate callback immutableExports', function() {
 		
-		var mod = utils.getTmpModule(`
+		var mod = new utils.TmpModule(`
 			module.invalidable = true;
 			
 			var report;
@@ -75,13 +75,13 @@ describe('onInvalidate', function() {
 			invalidateCount: 0
 		};
 		
-		mod.exports.setReport(report);
+		mod.module.exports.setReport(report);
 		
-		module.invalidateByPath(mod.filename);
+		module.invalidateByPath(mod.module.filename);
 		
 		assert.equal(report.invalidateCount, 1);
 		
-		assert.equal(mod.exports.foo, 123);
+		assert.equal(mod.module.exports.foo, 123);
 		assert.equal(report.immutableExports.foo, 123);
 		
 		assert.notStrictEqual(module.exports, report.immutableExports);
