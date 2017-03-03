@@ -29,7 +29,7 @@ Module.prototype.invalidate = function() {
 		return;
 	
 	if ( '_invalidateCallbacks' in this ) {
-		
+
 		this._invalidateCallbacks.forEach(callback => callback(this._exports));
 		this._invalidateCallbacks.clear();
 	}
@@ -173,33 +173,41 @@ Object.defineProperty(Module.prototype, 'exports', {
 	}
 });
 
+Module.prototype.unload = function() {
 
-/* test
-Module.prototype._unload = function() {
-	
-	this.exports = null;
+	this.invalidate();
 	
 	// remove this module from all module children	
-	for ( var path in this.cache ) {
+	for ( var id in Module._cache ) {
 		 
-		var children = this.cache[path].children;
+		var children = Module._cache[id].children;
 		var pos = children.indexOf(this);
-		if ( pos != -1 )
+		if ( pos !== -1 )
 			children.splice(pos);
 	}
 
-	// remove module from Module._cache
-	delete this.constructor._cache[this.filename];
+	delete Module._cache[this.filename];
 	
 	this.parent = null;
 
 	this.children.length = 0;
 	
 	// remove module from Module._pathCache
-	var pathCache = this.constructor._pathCache;
+	var pathCache = Module._pathCache;
 	var keys = Object.keys(pathCache);
 	for ( var i = 0; i < keys.length; ++i )
-		if ( pathCache[keys[i]] == this.filename )
+		if ( pathCache[keys[i]] === this.filename )
 			delete pathCache[keys[i]];
 }
-*/
+
+Module.prototype.unloadByPath = function(path) {
+
+	Module._cache[Module._resolveFilename(path, this, this.parent === null)].unload();
+}
+
+Module.unloadByExports = function(exports) {
+	
+	for ( var id in Module._cache )
+		if ( Module._cache[id].exports === exports )
+			Module._cache[id].unload();
+}
