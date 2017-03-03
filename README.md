@@ -16,7 +16,7 @@ Invalidate node.js modules loaded through `require()`
 
 ### example: simple case
 
-module `./myModule.js`
+###### module `./myModule.js`
 ```JavaScript
 module.invalidable = true;
 
@@ -27,7 +27,7 @@ exports.count = function() {
 }
 ```
 
-main module `./index.js`
+###### main module `./index.js`
 ```JavaScript
 require('module-invalidate');
 
@@ -131,8 +131,8 @@ Any nodejs-non-internal module loaded after this call can be handled by this lib
 #### `module.invalidable`
 This property controls whether the module can be invalidated. By default, modules are not invalidable. This property must be set before exporting.
 
-###### Example:
-module `./myModule.js`
+##### Example:
+###### module `./myModule.js`
 ```JavaScript
 module.invalidable = true;
 module.exports = {
@@ -143,7 +143,7 @@ module.exports = {
 #### `module.invalidateByPath(path)`
 Invalidates the specified module by its path (same syntax and context than `require()`). The module should have been flagged as invalidable using `module.invaluable`.
 
-###### Example:
+##### Example:
 ```JavaScript
 require('module-invalidate');
 var myModule = require('./myModule.js');
@@ -154,15 +154,15 @@ module.invalidateByPath('./myModule.js');
 #### `Module.invalidateByExports(exports)`
 Invalidates the module by giving its exported object. The module should have been flagged as invalidable using `module.invaluable`.  
 
-###### Example:
+##### Example:
 ```JavaScript
 require('module-invalidate');
 var myModule = require('./myModule.js');
 module.constructor.invalidateByExports(myModule);
 ```
 
-`invalidateByExports()` only invalidates one module
-module `B.js`
+`invalidateByExports()` only invalidates one module.
+###### module `B.js`
 ```
 	module.invalidable = true;
 	console.log('load B');
@@ -171,7 +171,7 @@ module `B.js`
 	}
 ```
 
-module `A.js`
+###### module `A.js`
 ```
 	module.invalidable = true;
 	console.log('load A');
@@ -179,7 +179,7 @@ module `A.js`
 
 ```
 
-main module `index.js`
+###### main module `index.js`
 ```
 	require('module-invalidate');
 	var a = require('./A.js');
@@ -200,7 +200,7 @@ load A
 #### `Module.invalidate()`
 Invalidates all nodejs-non-internal modules. Only process modules that have been flagged as invalidable using `module.invaluable`.
 
-###### Example:
+##### Example:
 ```JavaScript
 require('module-invalidate');
 module.constructor.invalidate();
@@ -210,7 +210,7 @@ module.constructor.invalidate();
 #### `module.invalidate()`
 Invalidates the module `module`. The module should have been flagged as invalidable using `module.invaluable`.
 
-###### Example:
+##### Example:
 ```JavaScript
 module.invalidate();
 ```
@@ -268,7 +268,7 @@ In this case, `bar` will always refers to the initial `foo.bar` value. To avoid 
 In a module, `module.exports` will always refers to the latest version of the module.
 
 
-module `./child.js`
+###### module `./child.js`
 ```
 module.invalidable = true;
 module.exports = {};
@@ -279,7 +279,7 @@ setInterval(function() {
 
 ```
 
-main module `index.js`
+###### main module `index.js`
 ```
 require('module-invalidate');
 
