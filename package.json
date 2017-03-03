@@ -3,19 +3,21 @@
   "version": "0.9.3",
   "description": "invalidate required modules",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "mocha"
+  },
   "author": "Franck Freiburger",
   "license": "MIT",
   "devDependencies": {
-    "ffi": "^2.2.0"
+    "ffi": "^2.2.0",
+    "mocha": "^3.2.0"
   },
-  "repository" : {
-    "type" : "git",
-    "url" : "git@github.com:FranckFreiburger/module-invalidate.git"
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:FranckFreiburger/module-invalidate.git"
   },
   "bugs": {
     "url": "https://github.com/FranckFreiburger/module-invalidate/issues"
   },
   "homepage": "https://github.com/FranckFreiburger/module-invalidate#readme"
-
 }
