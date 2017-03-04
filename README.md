@@ -3,7 +3,7 @@ Invalidate node.js modules loaded through `require()`
 
 
 ## Description
-`module-invalidate` allows you to invalidate a given module (or all modules) and make it automatically reloaded on further access.  
+`module-invalidate` allows you to invalidate a given module (or all modules) and make it automatically reloaded on further access, no need to call `require()` again.  
 
 
 ## Install
@@ -246,8 +246,8 @@ Register a callback that will be called when the module is invalidated. The `imm
 
 #### `typeof module.exports` is always 'function'
 
-Because the library is unable to know in advance what type of value will be assigned to `module.export`, it choose the most generic one.
-`(function(){}) instanceof Object === true`
+Because the library is unable to know in advance what type of value will be assigned to `module.export`, it choose the most generic one as ES6 Proxy target.
+However, `(function(){}) instanceof Object === true`
 
 
 #### ownKeys is not supported
