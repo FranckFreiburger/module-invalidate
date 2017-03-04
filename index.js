@@ -50,6 +50,8 @@ function reload(mod) {
 	mod.load(mod.filename);
 }
 
+const cache = Symbol();
+
 function createProxy(mod) {
 	
 	return new Proxy(function() {}, {
@@ -101,10 +103,28 @@ function createProxy(mod) {
 			mod._exports === null && reload(mod);
 			
 			// see http://stackoverflow.com/questions/42496414/illegal-invocation-error-using-es6-proxy-and-node-js
-			// see https://github.com/nodejs/node/issues/11629
-			//var val = Reflect.get(mod._exports, property, receiver);
-			//return typeof(val) === 'function' ? val.bind(mod._exports) : val;
-			return Reflect.get(mod._exports, property, receiver);
+			// see https://github.com/nodejs/node/issues/11629 (Illegal invocation error using ES6 Proxy and node.js)
+			// see http://stackoverflow.com/questions/42594682/how-to-determine-that-a-javascript-function-is-native-without-testing-native
+			
+			//return Reflect.get(mod._exports, property, receiver); // fails with native functions
+	
+			// needed for native function, like Promise.resolve().then, ...
+			var val = Reflect.get(mod._exports, property, receiver);
+		
+			if ( typeof(val) === 'function' ) {
+
+				if ( cache in val )
+					return val[cache];
+				var bound = val.bind(mod._exports);
+				Object.setPrototypeOf(bound, val);
+				val[cache] = bound;
+				return bound;
+			}
+
+			return val;
+			
+			//return typeof(val) === 'function' ? val.bind(mod._exports) : val; // TBD: bind native functions only
+
 		},
 		
 		set: function(target, property, value, receiver) {

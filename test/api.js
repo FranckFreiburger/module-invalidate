@@ -97,9 +97,41 @@ describe('API basic tests', function() {
 		assert.equal(mod.module.exports.a.b.c, 2);
 		assert.equal(b.c, 1);
 	});
+
+	
+	it('selective reload', function() {
+
+		var mB = new utils.TmpModule(_ =>`
+			module.invalidable = true;
+			var val = 0;
+			module.exports = function() {
+
+				return (val++);
+			}
+		`);
+
+		var mA = new utils.TmpModule(_ =>`
+			module.invalidable = true;
+			const m = require(${JSON.stringify(mB.filename)});
+			var val = 0;
+			module.exports = function() {
+
+				return (val++)+','+m();
+			}
+		`);
+		
+		assert.equal(mA.module.exports(), '0,0');
+		assert.equal(mA.module.exports(), '1,1');
+		mA.module.invalidate();
+		assert.equal(mA.module.exports(), '0,2');
+		assert.equal(mA.module.exports(), '1,3');
+		mB.module.invalidate();
+		assert.equal(mA.module.exports(), '2,0');
+		assert.equal(mA.module.exports(), '3,1');
+	});
 	
 
-	it('selective reload', function() {
+	it('selective reload nested', function() {
 		
 		global.report = '';
 		

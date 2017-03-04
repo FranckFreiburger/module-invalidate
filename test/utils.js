@@ -28,7 +28,6 @@ exports.TmpModule = function(moduleContent, opts) {
 	this.filename = path.join(__dirname, `_tmp_mod${moduleIndex}.js`);
 	
 	Object.defineProperty(this, 'module', {
-		
 		get: () => {
 			
 			for ( var filename in Module._cache )
