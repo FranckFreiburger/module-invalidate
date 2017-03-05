@@ -70,7 +70,7 @@ function reload(mod) {
 
 
 function createProxy(mod) {
-
+	
 	return new Proxy(function() {}, {
 
 		getPrototypeOf: function(target) {
@@ -121,6 +121,14 @@ function createProxy(mod) {
 		get: function(target, property, receiver) {
 			
 			mod._exports === null && reload(mod);
+			
+			if ( property === Symbol.toPrimitive ) {
+			
+				return function() {
+					
+					return mod._exports;
+				}
+			}
 			
 			// see http://stackoverflow.com/questions/42496414/illegal-invocation-error-using-es6-proxy-and-node-js
 			// see https://github.com/nodejs/node/issues/11629 (Illegal invocation error using ES6 Proxy and node.js)
@@ -202,7 +210,7 @@ Object.defineProperty(Module.prototype, 'invalidable', {
 
 Object.defineProperty(Module.prototype, 'exports', {
 	get: function() {
-		
+
 		return this._proxy ? this._proxy : this._exports;
 	},
 	set: function(value) {

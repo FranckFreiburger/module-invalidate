@@ -66,7 +66,58 @@ describe('exports', function() {
 			module.exports = 'foo';
 		`);
 		
-		assert.throws(function() { mod.module.exports.length }, /TypeError/);
+		assert.equal(mod.module.exports, 'foo');
+		//assert.throws(function() { mod.module.exports.length }, /TypeError/);
+	});
+
+
+	it('exports type primitive to primitive', function() {
+		
+		val = '123';
+		var mod = new utils.TmpModule(_ => `
+			module.invalidable = true;
+			module.exports = ${val};
+		`);
+		
+		assert.equal(mod.module.exports, 123);
+
+		val = '456';
+		mod.set();
+		mod.module.invalidate();
+		assert.equal(mod.module.exports, 456);
+	});
+
+
+	it('exports type primitive to object', function() {
+		
+		var val = '123';
+		var mod = new utils.TmpModule(_ => `
+			module.invalidable = true;
+			module.exports = ${val};
+		`);
+		
+		assert.equal(mod.module.exports, 123);
+		val = '{ a:"bar" }';
+		mod.set();
+		mod.module.invalidate();
+		assert.equal(mod.module.exports.a, 'bar');
+	});
+
+
+	it('exports type object to primitive', function() {
+		
+		val = '{ a:"bar" }';
+		var mod = new utils.TmpModule(_ => `
+			module.invalidable = true;
+			module.exports = ${val};
+		`);
+		
+		assert.equal(mod.module.exports.a, 'bar');
+
+		val = '456';
+		mod.set();
+		mod.module.invalidate();
+		assert.equal(mod.module.exports, 456);
 	});
 
 
@@ -177,7 +228,7 @@ describe('exports', function() {
 	});
 	
 	
-	it('exports json', function() {
+	it('exports json object', function() {
 		
 		var val = 1;
 		
@@ -193,5 +244,25 @@ describe('exports', function() {
 
 		assert.equal(mod.module.exports.a, 2);
 	});
+
+
+	it('exports json primitive to primitive', function() {
+		
+		var val = 1;
+		
+		var mod = new utils.TmpModule(_ =>`${val}`, { ext: 'json' });
+		mod.module.invalidable = true;
+		
+		assert.equal(mod.module.exports, 1);
+
+		val++;
+		mod.set();
+		mod.module.invalidate();
+
+		assert.equal(mod.module.exports, 2);
+		
+		//assert.throws(function() { mod.module.exports.toString() }, TypeError);
+	});
+	
 	
 });
