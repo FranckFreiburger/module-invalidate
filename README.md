@@ -233,6 +233,9 @@ callback: `function(immutable_exports)`
 Register a callback that will be called when the module is invalidated. The `immutable_exports` is a permanent reference to the current module.exports .  
 `onInvalidate` returns a function that unregisters the callback.
 
+Gives you the opportunity to free resources created in the module.  
+eg. temporary files, timers, web routes, ...
+
 
 
 ## How it works
