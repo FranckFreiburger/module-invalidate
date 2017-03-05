@@ -50,7 +50,7 @@ function reload(mod) {
 	mod.load(mod.filename);
 }
 
-const cache = Symbol();
+const boundCached = Symbol();
 
 function createProxy(mod) {
 	
@@ -113,11 +113,11 @@ function createProxy(mod) {
 		
 			if ( typeof(val) === 'function' ) {
 
-				if ( cache in val )
-					return val[cache];
+				if ( boundCached in val )
+					return val[boundCached];
 				var bound = val.bind(mod._exports);
 				Object.setPrototypeOf(bound, val);
-				val[cache] = bound;
+				val[boundCached] = bound;
 				return bound;
 			}
 
