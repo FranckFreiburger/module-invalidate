@@ -8,6 +8,21 @@ const boundCachedSym = Symbol();
 const invalidateCallbacksSym = Symbol();
 const validateCallbacksSym = Symbol();
 
+function identityFct(value) {
+	
+	return function() {
+		
+		return value;	
+	}
+}
+
+function bindSetProto(fct, value) {
+
+	var bound = fct.bind(value);
+	Object.setPrototypeOf(bound, fct); // see test "exports property on function"
+	return bound;
+}
+
 
 Module.invalidate = function() {
 	
@@ -122,13 +137,8 @@ function createProxy(mod) {
 			
 			mod._exports === null && reload(mod);
 			
-			if ( property === Symbol.toPrimitive ) {
-			
-				return function() {
-					
-					return mod._exports;
-				}
-			}
+			if ( property === Symbol.toPrimitive )
+				return identityFct(mod._exports);
 			
 			// see http://stackoverflow.com/questions/42496414/illegal-invocation-error-using-es6-proxy-and-node-js
 			// see https://github.com/nodejs/node/issues/11629 (Illegal invocation error using ES6 Proxy and node.js)
@@ -141,12 +151,8 @@ function createProxy(mod) {
 			if ( typeof(val) === 'function' ) { // TBD: bind native functions only
 
 				// needed for native function, like Promise.resolve().then, ...
-				if ( boundCachedSym in val )
-					return val[boundCachedSym];
-				var bound = val.bind(mod._exports);
-				Object.setPrototypeOf(bound, val); // see test "exports property on function"
-				val[boundCachedSym] = bound;
-				return bound;
+
+				return boundCachedSym in val ? val[boundCachedSym] : val[boundCachedSym] = bindSetProto(val, mod._exports);
 			}
 
 			return val;
