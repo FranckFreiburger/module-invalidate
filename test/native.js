@@ -36,6 +36,17 @@ describe('native module', function() {
 	});
 
 
+	it('os.type as exports', function() {
+		
+		var mod = new utils.TmpModule(`
+			module.invalidable = true;
+			module.exports = require('os').type;
+		`);
+		
+		assert.equal(typeof mod.module.exports(), 'string');
+	});
+
+
 
 	it('lib ffi', function() {
 		
