@@ -109,7 +109,7 @@ function createProxy(mod) {
 			//return Reflect.get(mod._exports, property, receiver); // fails with native functions
 	
 			// needed for native function, like Promise.resolve().then, ...
-			var val = Reflect.get(mod._exports, property, receiver);
+			var val = Reflect.get(mod._exports, property);
 		
 			if ( typeof(val) === 'function' ) {
 
@@ -130,7 +130,7 @@ function createProxy(mod) {
 		set: function(target, property, value, receiver) {
 			
 			mod._exports === null && reload(mod);
-			return Reflect.set(mod._exports, property, value, receiver);
+			return Reflect.set(mod._exports, property, value);
 		},
 		
 		deleteProperty: function(target, property) {
