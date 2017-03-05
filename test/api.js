@@ -112,7 +112,7 @@ describe('API basic tests', function() {
 
 		var mA = new utils.TmpModule(_ =>`
 			module.invalidable = true;
-			const m = require(${JSON.stringify(mB.filename)});
+			const m = require(${utils.quoteString(mB.filename)});
 			var val = 0;
 			module.exports = function() {
 
@@ -143,13 +143,13 @@ describe('API basic tests', function() {
 		var mB = new utils.TmpModule(_ =>`
 			global.report += 'b';
 			module.invalidable = true;
-			require(${JSON.stringify(mC.filename)});
+			require(${utils.quoteString(mC.filename)});
 		`, { autoLoad: false });
 
 		var mA = new utils.TmpModule(_ =>`
 			global.report += 'a';
 			module.invalidable = true;
-			require(${JSON.stringify(mB.filename)});
+			require(${utils.quoteString(mB.filename)});
 		`);
 		
 		mA.load();
@@ -167,5 +167,44 @@ describe('API basic tests', function() {
 		delete global.report;
 		
 	});
+	
+	
+	it('invalidateByExports unique', function() {
+		
+		global.report = '';
+		
+		var mB = new utils.TmpModule(_ =>`
+			global.report += 'b';
+			module.invalidable = true;
+			module.exports = { foo: 'bar' };
+		`, { autoLoad: false });
+
+		var mA = new utils.TmpModule(_ =>`
+			global.report += 'a';
+			module.invalidable = true;
+			module.exports = require(${utils.quoteString(mB.filename)});
+		`);
+		
+		mA.load();
+		
+		assert.equal(global.report, 'ab');
+		
+		module.constructor.invalidateByExports(mA.module.exports);
+		mA.module.exports.foo;
+		mB.module.exports.foo;
+		
+		assert.equal(global.report, 'aba');
+
+		module.constructor.invalidateByExports(mB.module.exports);
+		mA.module.exports.foo;
+		mB.module.exports.foo;
+		
+		assert.equal(global.report, 'abab');
+
+		delete global.report;
+		
+	});
+
+	
 
 });

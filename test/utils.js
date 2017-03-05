@@ -19,6 +19,10 @@ process.on('exit', onEnd);
 process.on('SIGINT', onEnd);
 process.on('uncaughtException', onEnd);
 
+exports.quoteString = function(str) {
+	
+	return JSON.stringify(str);
+}
 
 exports.TmpModule = function(moduleContent, opts = {}) {
 	
