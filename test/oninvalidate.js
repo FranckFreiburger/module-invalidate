@@ -86,5 +86,45 @@ describe('onInvalidate', function() {
 		
 		assert.notStrictEqual(module.exports, report.immutableExports);
 	});
+
+
+	it('onInvalidate callback all', function() {
+		
+		var mod = new utils.TmpModule(`
+			module.invalidable = true;
+
+			this.connectedUsers = [];
+			
+			exports.connectUser = function(name) {
+				
+				this.connectedUsers.push(name);
+			}
+
+			exports.getConnectedUsers = function() {
+				
+				return this.connectedUsers;
+			}
+			
+			module.onInvalidate(function(immutableExports) {
+
+				return function(newExports) {
+					
+					newExports.connectedUsers = immutableExports.connectedUsers;
+				}
+			});
+		`);
+		
+		
+		mod.module.exports.connectUser('foo');
+		mod.module.exports.connectUser('bar');
+
+		assert.equal(mod.module.exports.getConnectedUsers().join(), 'foo,bar');
+		
+		module.invalidateByPath(mod.module.filename);
+
+		assert.equal(mod.module.exports.getConnectedUsers().join(), 'foo,bar');
+		
+	});
+
 	
 });

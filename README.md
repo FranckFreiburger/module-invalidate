@@ -236,6 +236,32 @@ Register a callback that will be called when the module is invalidated. The `imm
 Gives you the opportunity to free resources created in the module.  
 eg. temporary files, timers, web routes, ...
 
+The `callback` can return function that is called after the module is reloaded. This can help you restore your module state.
+
+##### Example:
+```JavaScript
+module.invalidable = true;
+this.connectedUsers = [];
+exports.connectUser = function(name) {
+	
+	this.connectedUsers.push(name);
+}
+
+exports.getConnectedUsers = function() {
+	
+	return this.connectedUsers;
+}
+
+module.onInvalidate(function(oldExports) {
+
+	return function(newExports) {
+		
+		newExports.connectedUsers = oldExports.connectedUsers;
+	}
+});
+
+```
+
 
 
 ## How it works

@@ -29,8 +29,15 @@ Module.prototype.invalidate = function() {
 		return;
 	
 	if ( '_invalidateCallbacks' in this ) {
+		
+		var validateCallbacks = this._validateCallbacks || (this._validateCallbacks = new Set);
 
-		this._invalidateCallbacks.forEach(callback => callback(this._exports));
+		this._invalidateCallbacks.forEach(callback => {
+			
+			var validateCallback = callback(this._exports);
+			if ( typeof(validateCallback) === 'function' )
+				validateCallbacks.add(validateCallback);
+		});
 		this._invalidateCallbacks.clear();
 	}
 	
@@ -48,6 +55,12 @@ function reload(mod) {
 	mod._exports = {}; // resets _exports
 	mod.loaded = false;
 	mod.load(mod.filename);
+	
+	if ( '_validateCallbacks' in mod ) {
+		
+		mod._validateCallbacks.forEach(callback => callback(mod.exports) );
+		mod._validateCallbacks.clear();
+	}
 }
 
 const boundCached = Symbol();

@@ -193,7 +193,5 @@ describe('exports', function() {
 
 		assert.equal(mod.module.exports.a, 2);
 	});
-
-
 	
 });
