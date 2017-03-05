@@ -250,18 +250,6 @@ Because the library is unable to know in advance what type of value will be assi
 However, `(function(){}) instanceof Object === true`
 
 
-#### ownKeys is not supported
-
-Reflect.ownKeys(), Object.keys(), for-in loop, console.log(), ... are not available on the module exports (only).
-
-##### Example:
-```
-Object.keys(require('foo.js'));
-```
-will throw a `TypeError: ownKeys not implemented` exception.  
-However for-of loop works properly.
-
-
 #### Only direct variable access is handled
 
 ##### Example:

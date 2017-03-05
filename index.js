@@ -53,7 +53,7 @@ function reload(mod) {
 const boundCached = Symbol();
 
 function createProxy(mod) {
-	
+
 	return new Proxy(function() {}, {
 
 		getPrototypeOf: function(target) {
@@ -83,6 +83,9 @@ function createProxy(mod) {
 		getOwnPropertyDescriptor: function(target, prop) {
 			
 			mod._exports === null && reload(mod);
+
+			if ( prop === 'prototype' && typeof(mod._exports) !== 'function' ) // see ownKeys
+				return {};
 			return Reflect.getOwnPropertyDescriptor(mod._exports, prop);
 		},
 		
@@ -108,23 +111,20 @@ function createProxy(mod) {
 			
 			//return Reflect.get(mod._exports, property, receiver); // fails with native functions
 	
-			// needed for native function, like Promise.resolve().then, ...
 			var val = Reflect.get(mod._exports, property);
 		
-			if ( typeof(val) === 'function' ) {
+			if ( typeof(val) === 'function' ) { // TBD: bind native functions only
 
+				// needed for native function, like Promise.resolve().then, ...
 				if ( boundCached in val )
 					return val[boundCached];
 				var bound = val.bind(mod._exports);
-				Object.setPrototypeOf(bound, val);
+				Object.setPrototypeOf(bound, val); // see test "exports property on function"
 				val[boundCached] = bound;
 				return bound;
 			}
 
 			return val;
-			
-			//return typeof(val) === 'function' ? val.bind(mod._exports) : val; // TBD: bind native functions only
-
 		},
 		
 		set: function(target, property, value, receiver) {
@@ -143,8 +143,8 @@ function createProxy(mod) {
 			
 			mod._exports === null && reload(mod);
 			// see https://tc39.github.io/ecma262/#sec-invariants-of-the-essential-internal-methods
-			throw new TypeError('ownKeys not implemented');
-			//return [...Reflect.ownKeys(target), ...Reflect.ownKeys(mod._exports)];
+			//throw new TypeError('ownKeys not implemented');
+			return Reflect.ownKeys(target).concat(Reflect.ownKeys(mod._exports));
 			//return Reflect.ownKeys(mod._exports);
 		},
 		

@@ -70,15 +70,30 @@ describe('exports', function() {
 	});
 
 
-	it('exports ownKeys', function() {
+	it('exports Object.keys', function() {
+		
+		var mod = new utils.TmpModule(`
+			module.invalidable = true;
+			module.exports = { a:1, b:2 };
+		`);
+
+		assert.equal(Object.keys(mod.module.exports).join(), 'a,b');
+	});
+
+
+	it('exports for-in', function() {
 		
 		var mod = new utils.TmpModule(`
 			module.invalidable = true;
 			module.exports = { a:1, b:2 };
 		`);
 		
-		assert.throws(function() { for ( var i in mod.module.exports ); }, /TypeError/);
+		var res = '';
+		for ( var prop in mod.module.exports )
+			res += prop + mod.module.exports[prop];
+		assert.equal(res, 'a1b2');
 	});
+
 
 	it('exports for-of', function() {
 		
@@ -90,9 +105,8 @@ describe('exports', function() {
 		var val = 0;
 		for ( var v of mod.module.exports )
 			val += v;
-		
-		//assert.equal(mod.module.exports, 6);
-		assert.throws(function() { for ( var i in mod.module.exports ); }, /TypeError/);
+
+		assert.equal(val, 6);
 	});
 
 
