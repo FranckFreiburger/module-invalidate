@@ -118,7 +118,7 @@ function createProxy(mod) {
 			return Reflect.has(mod._exports, prop);
 		},
 		
-		get: function(target, property, receiver) {
+		get: function(target, property) {
 			
 			mod._exports === null && reload(mod);
 			
@@ -152,7 +152,7 @@ function createProxy(mod) {
 			return val;
 		},
 		
-		set: function(target, property, value, receiver) {
+		set: function(target, property, value) {
 			
 			mod._exports === null && reload(mod);
 			return Reflect.set(mod._exports, property, value);
