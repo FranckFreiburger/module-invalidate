@@ -4,6 +4,11 @@
 // and https://github.com/nodejs/node/blob/master/lib/internal/module.js
 const Module = module.constructor;
 
+const boundCachedSym = Symbol();
+const invalidateCallbacksSym = Symbol();
+const validateCallbacksSym = Symbol();
+
+
 Module.invalidate = function() {
 	
 	for ( var filename in Module._cache )
@@ -28,17 +33,17 @@ Module.prototype.invalidate = function() {
 	if ( !this.invalidable )
 		return;
 	
-	if ( '_invalidateCallbacks' in this ) {
+	if ( invalidateCallbacksSym in this ) {
 		
-		var validateCallbacks = this._validateCallbacks || (this._validateCallbacks = new Set);
+		var validateCallbacks = this[validateCallbacksSym] || (this[validateCallbacksSym] = new Set);
 
-		this._invalidateCallbacks.forEach(callback => {
+		this[invalidateCallbacksSym].forEach(callback => {
 			
 			var validateCallback = callback(this._exports);
 			if ( typeof(validateCallback) === 'function' )
 				validateCallbacks.add(validateCallback);
 		});
-		this._invalidateCallbacks.clear();
+		this[invalidateCallbacksSym].clear();
 	}
 	
 	this._exports = null;
@@ -46,7 +51,7 @@ Module.prototype.invalidate = function() {
 
 Module.prototype.onInvalidate = function(callback) {
 	
-	var invalidateCallbacks = this._invalidateCallbacks || (this._invalidateCallbacks = new Set);
+	var invalidateCallbacks = this[invalidateCallbacksSym] || (this[invalidateCallbacksSym] = new Set);
 	return invalidateCallbacks.add(callback).delete.bind(invalidateCallbacks, callback);
 }
 
@@ -56,14 +61,13 @@ function reload(mod) {
 	mod.loaded = false;
 	mod.load(mod.filename);
 	
-	if ( '_validateCallbacks' in mod ) {
+	if ( validateCallbacksSym in mod ) {
 		
-		mod._validateCallbacks.forEach(callback => callback(mod.exports) );
-		mod._validateCallbacks.clear();
+		mod[validateCallbacksSym].forEach(callback => callback(mod._exports) );
+		mod[validateCallbacksSym].clear();
 	}
 }
 
-const boundCached = Symbol();
 
 function createProxy(mod) {
 
@@ -129,11 +133,11 @@ function createProxy(mod) {
 			if ( typeof(val) === 'function' ) { // TBD: bind native functions only
 
 				// needed for native function, like Promise.resolve().then, ...
-				if ( boundCached in val )
-					return val[boundCached];
+				if ( boundCachedSym in val )
+					return val[boundCachedSym];
 				var bound = val.bind(mod._exports);
 				Object.setPrototypeOf(bound, val); // see test "exports property on function"
-				val[boundCached] = bound;
+				val[boundCachedSym] = bound;
 				return bound;
 			}
 
