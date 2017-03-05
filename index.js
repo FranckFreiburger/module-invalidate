@@ -143,9 +143,10 @@ function createProxy(mod) {
 			
 			mod._exports === null && reload(mod);
 			// see https://tc39.github.io/ecma262/#sec-invariants-of-the-essential-internal-methods
-			//throw new TypeError('ownKeys not implemented');
-			return Reflect.ownKeys(target).concat(Reflect.ownKeys(mod._exports));
-			//return Reflect.ownKeys(mod._exports);
+			var ownKeys = Reflect.ownKeys(mod._exports);
+			if ( typeof mod._exports !== 'function' )
+				ownKeys.push('prototype');
+			return ownKeys;
 		},
 		
 		apply: function(target, thisArg, argumentsList) {
