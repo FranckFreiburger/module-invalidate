@@ -88,7 +88,7 @@ describe('onInvalidate', function() {
 	});
 
 
-	it('onInvalidate callback all', function() {
+	it('onInvalidate + validate callbacks', function() {
 		
 		var mod = new utils.TmpModule(`
 			module.invalidable = true;

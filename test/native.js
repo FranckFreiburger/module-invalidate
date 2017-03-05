@@ -5,7 +5,7 @@ require('../index.js');
 
 describe('native module', function() {
 
-	it('os.cpus without invalidable', function() {
+	it('os.cpus without non-invalidable', function() {
 		
 		var mod = new utils.TmpModule(`
 			module.exports = require('os');
@@ -14,7 +14,7 @@ describe('native module', function() {
 		assert.equal(typeof mod.module.exports.cpus(), 'object');
 	});
 
-	it('os.cpus with invalidable', function() {
+	it('os.cpus', function() {
 		
 		var mod = new utils.TmpModule(`
 			module.invalidable = true;
@@ -23,6 +23,18 @@ describe('native module', function() {
 		
 		assert.equal(typeof mod.module.exports.cpus(), 'object');
 	});
+
+
+	it('os.cpus as exports', function() {
+		
+		var mod = new utils.TmpModule(`
+			module.invalidable = true;
+			module.exports = require('os').cpus;
+		`);
+		
+		assert.equal(typeof mod.module.exports(), 'object');
+	});
+
 
 
 	it('lib ffi', function() {
