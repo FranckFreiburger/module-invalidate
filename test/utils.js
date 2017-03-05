@@ -20,12 +20,13 @@ process.on('SIGINT', onEnd);
 process.on('uncaughtException', onEnd);
 
 
-exports.TmpModule = function(moduleContent, opts) {
+exports.TmpModule = function(moduleContent, opts = {}) {
 	
 	moduleIndex++;
 	var moduleContentFct = null;
 
-	this.filename = path.join(__dirname, `_tmp_mod${moduleIndex}.js`);
+	var ext = opts.ext || 'js';
+	this.filename = path.join(__dirname, `_tmp_mod${moduleIndex}.${ext}`);
 	
 	Object.defineProperty(this, 'module', {
 		get: () => {

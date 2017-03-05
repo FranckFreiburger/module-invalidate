@@ -177,4 +177,23 @@ describe('exports', function() {
 	});
 	
 	
+	it('exports json', function() {
+		
+		var val = 1;
+		
+		var mod = new utils.TmpModule(_ =>`{ "a":${val} }`, { ext: 'json' });
+		
+		mod.module.invalidable = true;
+		
+		assert.equal(mod.module.exports.a, 1);
+		
+		val++;
+		mod.set();
+		mod.module.invalidate();
+
+		assert.equal(mod.module.exports.a, 2);
+	});
+
+
+	
 });
