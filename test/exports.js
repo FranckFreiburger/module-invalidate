@@ -156,6 +156,20 @@ describe('exports', function() {
 	});
 
 
+
+	xit('exports type null', function() {
+		
+		var mod = new utils.TmpModule(`
+			module.invalidable = true;
+			module.exports = null;
+		`);
+		
+		assert.equal(mod.module.exports === null, true);
+		module.constructor.invalidateByExports(mod.module.exports);
+		assert.equal(mod.module.exports === null, true);
+	});
+
+
 	it('exports type primitive to primitive', function() {
 		
 		val = '123';
@@ -450,7 +464,7 @@ describe('exports', function() {
 	});
 	
 
-	it('implicit valueOf()', function() {
+	it('defined valueOf()', function() {
 
 		var mod = new utils.TmpModule(`
 			module.invalidable = true;
