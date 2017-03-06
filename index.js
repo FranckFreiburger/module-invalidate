@@ -34,7 +34,7 @@ function bindSetProto(fct, value) {
 		return fct.apply(value, arguments);
 	}
 	Object.setPrototypeOf(bound, fct); // see test "exports property on function"
-	delete bound.name; // preserves the bound function name
+	delete bound.name; // preserves the original function name
 	return bound;
 }
 
