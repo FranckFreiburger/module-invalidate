@@ -173,14 +173,11 @@ function createProxy(mod) {
 			// see http://stackoverflow.com/questions/42496414/illegal-invocation-error-using-es6-proxy-and-node-js
 			// see https://github.com/nodejs/node/issues/11629 (Illegal invocation error using ES6 Proxy and node.js)
 			// see http://stackoverflow.com/questions/42594682/how-to-determine-that-a-javascript-function-is-native-without-testing-native
-			
-			//return Reflect.get(mod._exports, property, receiver); // fails with native functions
-			
 			// see V8 issue https://bugs.chromium.org/p/v8/issues/detail?id=5773
 	
 			var val = Reflect.get(mod._exports, property);
 
-			if ( typeof(val) === 'function' /*&& val.prototype === undefined*/ ) { // native function has prototype === undefined
+			if ( typeof(val) === 'function' && !('prototype' in val) ) { // native function has prototype === undefined
 
 				// needed for native function, like Promise.resolve().then, ...
 
