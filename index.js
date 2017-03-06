@@ -10,8 +10,7 @@ const invalidated = Symbol();
 Module.invalidate = function() {
 	
 	for ( var filename in Module._cache )
-		if ( 'invalidate' in Module._cache[filename] )
-			Module._cache[filename].invalidate();
+		Module._cache[filename].invalidate();
 }
 
 Module.invalidateByExports = function(exports) {
@@ -61,13 +60,16 @@ function reload(mod) {
 	
 	if ( validateCallbacksSym in mod ) {
 		
-		mod[validateCallbacksSym].forEach(callback => callback(mod._exports) );
+		mod[validateCallbacksSym].forEach(callback => callback(mod._exports));
 		mod[validateCallbacksSym].clear();
 	}
 }
 
 
-Module.prototype.invalidable = false;
+Object.defineProperty(Module.prototype, 'invalidable', {
+	value: false,
+	writable: true
+});
 
 Object.defineProperty(Module.prototype, 'exports', {
 	get: function() {
