@@ -7,6 +7,7 @@ const Module = module.constructor;
 const boundCachedSym = Symbol();
 const invalidateCallbacksSym = Symbol();
 const validateCallbacksSym = Symbol();
+const invalid = Symbol();
 
 function toPrimitive(value) {
 
@@ -89,7 +90,7 @@ Module.prototype.invalidate = function() {
 		this[invalidateCallbacksSym].clear();
 	}
 	
-	this._exports = null;
+	this._exports = invalid;
 }
 
 Module.prototype.onInvalidate = function(callback) {
@@ -118,31 +119,31 @@ function createProxy(mod) {
 
 		getPrototypeOf: function(target) {
 			
-			mod._exports === null && reload(mod);
+			mod._exports === invalid && reload(mod);
 			return Reflect.getPrototypeOf(mod._exports);
 		},
 		
 		setPrototypeOf: function(target, prototype) {
 			
-			mod._exports === null && reload(mod);
+			mod._exports === invalid && reload(mod);
 			return Reflect.setPrototypeOf(mod._exports, prototype);
 		},
 		
 		isExtensible: function(target) {
 			
-			mod._exports === null && reload(mod);
+			mod._exports === invalid && reload(mod);
 			return Reflect.isExtensible(mod._exports);
 		},
 		
 		preventExtensions: function(target) {
 			
-			mod._exports === null && reload(mod);
+			mod._exports === invalid && reload(mod);
 			return Reflect.preventExtensions(mod._exports);
 		},
 		
 		getOwnPropertyDescriptor: function(target, prop) {
 			
-			mod._exports === null && reload(mod);
+			mod._exports === invalid && reload(mod);
 
 			if ( prop === 'prototype' && typeof(mod._exports) !== 'function' ) // see ownKeys
 				return {};
@@ -151,19 +152,19 @@ function createProxy(mod) {
 		
 		defineProperty: function(target, property, descriptor) {
 			
-			mod._exports === null && reload(mod);
+			mod._exports === invalid && reload(mod);
 			return Reflect.defineProperty(mod._exports, property, descriptor);
 		},
 		
 		has: function(target, prop) {
 			
-			mod._exports === null && reload(mod);
+			mod._exports === invalid && reload(mod);
 			return Reflect.has(mod._exports, prop);
 		},
 		
 		get: function(target, property) {
 			
-			mod._exports === null && reload(mod);
+			mod._exports === invalid && reload(mod);
 			
 			if ( property === Symbol.hasInstance )
 				return hasInstance(mod._exports);
@@ -189,19 +190,19 @@ function createProxy(mod) {
 		
 		set: function(target, property, value) {
 			
-			mod._exports === null && reload(mod);
+			mod._exports === invalid && reload(mod);
 			return Reflect.set(mod._exports, property, value);
 		},
 		
 		deleteProperty: function(target, property) {
 			
-			mod._exports === null && reload(mod);
+			mod._exports === invalid && reload(mod);
 			return Reflect.deleteProperty(mod._exports, property);
 		},
 		
 		ownKeys: function(target) {
 			
-			mod._exports === null && reload(mod);
+			mod._exports === invalid && reload(mod);
 			// see https://tc39.github.io/ecma262/#sec-invariants-of-the-essential-internal-methods
 			var ownKeys = Reflect.ownKeys(mod._exports);
 			if ( typeof mod._exports !== 'function' )
@@ -211,13 +212,13 @@ function createProxy(mod) {
 		
 		apply: function(target, thisArg, argumentsList) {
 			
-			mod._exports === null && reload(mod);
+			mod._exports === invalid && reload(mod);
 			return Reflect.apply(mod._exports, thisArg, argumentsList);
 		},
 		
 		construct: function(target, argumentsList, newTarget) {
 			
-			mod._exports === null && reload(mod);
+			mod._exports === invalid && reload(mod);
 			return Reflect.construct(mod._exports, argumentsList, newTarget);
 		}
 	});
