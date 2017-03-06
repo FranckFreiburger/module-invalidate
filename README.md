@@ -67,27 +67,6 @@ setInterval(function() {
 ```JavaScript
 require('module-invalidate');
 
-var foo = require('foo');
-
-console.log(foo.bar); // a value
-
-// -- 'foo' module has changed --
-
-myFooBarSystem.on('reloadModules', function() {
-	
-	module.constructor.invalidateByExports(foo);
-
-	console.log(foo.bar); // a new value
-})
-```
-
-
-##### Example:
-
-```JavaScript
-require('module-invalidate');
-
-
 var tmp_modulePath = require('path').join(__dirname, 'tmp_module.js');
 
 require('fs').writeFileSync(tmp_modulePath, `
@@ -95,20 +74,21 @@ require('fs').writeFileSync(tmp_modulePath, `
 	exports.a = 1;
 `);
 
+
 var tmp_module = require('./tmp_module.js');
 
-
 console.log(tmp_module.a); // 1
+
 
 require('fs').writeFileSync(tmp_modulePath, `
 	module.invalidable = true;
 	exports.a = 2;
 `);
 
-
-module.invalidateByPath('./tmp_module.js'); // or module.constructor.invalidateByExports(tmp_module)
+module.constructor.invalidateByExports(tmp_module);
 
 console.log(tmp_module.a); // 2
+
 
 require('fs').unlinkSync(tmp_modulePath);
 
