@@ -366,7 +366,55 @@ describe('exports', function() {
 		assert.equal(mod.module.exports.foo(), 123);
 		assert.equal(mod.module.exports.foo.bar, 456);
 	});
-	
+
+
+	it('changing property on function from the module', function() {
+
+		var mod = new utils.TmpModule(`
+			module.invalidable = true;
+			
+			var fct = function() {};
+			fct.bar = 456;
+			module.exports = {
+				foo: fct,
+				change: function() {
+					
+					fct.bar = 789;
+				}
+			}
+		`);
+		
+		assert.equal(mod.module.exports.foo.bar, 456);
+		mod.module.invalidate();
+		assert.equal(mod.module.exports.foo.bar, 456);
+		mod.module.exports.change();
+		assert.equal(mod.module.exports.foo.bar, 789);
+	});
+
+
+	xit('changing property on function from the outside', function() {
+
+		var mod = new utils.TmpModule(`
+			module.invalidable = true;
+			
+			var fct = function() {};
+			fct.bar = 456;
+			module.exports = {
+				foo: fct,
+				check: function() {
+					
+					return fct.bar;
+				}
+			}
+		`);
+		
+		assert.equal(mod.module.exports.foo.bar, 456);
+		mod.module.invalidate();
+		assert.equal(mod.module.exports.foo.bar, 789);
+		mod.module.exports.change();
+		assert.equal(mod.module.exports.check(), 789);
+	});
+
 	
 	it('property on function through the proxy (v1)', function() {
 
@@ -435,11 +483,11 @@ describe('exports', function() {
 		
 		assert.equal(mod.module.exports, 1);
 
-		val++;
+		val = '"foo"';
 		mod.set();
 		mod.module.invalidate();
 
-		assert.equal(mod.module.exports, 2);
+		assert.equal(mod.module.exports, 'foo');
 	});
 	
 	it('defined toString()', function() {
