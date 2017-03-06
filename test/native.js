@@ -16,7 +16,9 @@ describe('native module', function() {
 		assert.equal(typeof mod.module.exports.cpus(), 'object');
 	});
 
-	it('os.cpus', function() {
+
+	// see V8 issue https://bugs.chromium.org/p/v8/issues/detail?id=5773
+	xit('os.cpus', function() {
 		
 		var mod = new utils.TmpModule(`
 			module.invalidable = true;
@@ -26,6 +28,30 @@ describe('native module', function() {
 		assert.equal(typeof mod.module.exports.cpus(), 'object');
 		mod.module.invalidate();
 		assert.equal(typeof mod.module.exports.cpus(), 'object');
+	});
+	
+	xit('os.userInfo', function() {
+		
+		var mod = new utils.TmpModule(`
+			module.invalidable = true;
+			module.exports = require('os');
+		`);
+		
+		assert.equal(typeof mod.module.exports.userInfo(), 'string');
+		mod.module.invalidate();
+		assert.equal(typeof mod.module.exports.userInfo(), 'string');
+	});
+
+	it('process.platform', function() {
+		
+		var mod = new utils.TmpModule(`
+			module.invalidable = true;
+			module.exports = process.platform;
+		`);
+		
+		assert.equal(mod.module.exports, process.platform);
+		mod.module.invalidate();
+		assert.equal(mod.module.exports, process.platform);
 	});
 
 
@@ -85,6 +111,29 @@ describe('native module', function() {
 			
 			assert.equal(result, 123);
 		});
+	});
+	
+	
+	it('exports Math.cos to a property', function() {
+
+		var mod = new utils.TmpModule(`
+			module.invalidable = true;
+			module.exports.cos = Math.cos;
+		`);
+		
+		assert.equal(typeof mod.module.exports.cos, 'function');
+		assert.equal(mod.module.exports.cos(0), 1);
+	});
+
+
+	it('exports Math.cos directly', function() {
+
+		var mod = new utils.TmpModule(`
+			module.invalidable = true;
+			module.exports = Math.cos;
+		`);
+		
+		assert.equal(mod.module.exports(0), 1);
 	});
 	
 

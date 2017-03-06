@@ -143,7 +143,8 @@ describe('exports', function() {
 	});
 
 
-	it('exports type primitive', function() {
+
+	it('exports type string primitive', function() {
 		
 		var mod = new utils.TmpModule(`
 			module.invalidable = true;
@@ -156,7 +157,48 @@ describe('exports', function() {
 	});
 
 
+	it('exports type boolean primitive', function() {
+		
+		var mod = new utils.TmpModule(`
+			module.invalidable = true;
+			module.exports = true;
+		`);
+		
+		assert.equal(mod.module.exports, true);
+		module.constructor.invalidateByExports(mod.module.exports);
+		assert.equal(mod.module.exports, true);
+	});
 
+
+	xit('exports type void(0) primitive', function() {
+		
+		var mod = new utils.TmpModule(`
+			module.invalidable = true;
+			module.exports = void(0);
+		`);
+		
+		assert.equal(mod.module.exports, void(0));
+		module.constructor.invalidateByExports(mod.module.exports);
+		assert.equal(mod.module.exports, void(0));
+	});
+
+
+	it('exports type null-prototype object', function() {
+		
+		var mod = new utils.TmpModule(`
+			module.invalidable = true;
+			module.exports = Object.create(null);
+			module.exports.foo = 123;
+		`);
+		
+		assert.equal(Object.getPrototypeOf(mod.module.exports), null);
+		assert.equal(mod.module.exports.foo, 123);
+		mod.module.invalidate();
+		assert.equal(Object.getPrototypeOf(mod.module.exports), null);
+		assert.equal(mod.module.exports.foo, 123);
+	});
+
+	
 	xit('exports type null', function() {
 		
 		var mod = new utils.TmpModule(`
@@ -392,7 +434,7 @@ describe('exports', function() {
 	});
 
 
-	xit('changing property on function from the outside', function() {
+	it('changing property on function from the outside', function() {
 
 		var mod = new utils.TmpModule(`
 			module.invalidable = true;
@@ -410,8 +452,9 @@ describe('exports', function() {
 		
 		assert.equal(mod.module.exports.foo.bar, 456);
 		mod.module.invalidate();
-		assert.equal(mod.module.exports.foo.bar, 789);
-		mod.module.exports.change();
+		assert.equal(mod.module.exports.foo.bar, 456);
+		mod.module.exports.foo.bar = 789;
+
 		assert.equal(mod.module.exports.check(), 789);
 	});
 

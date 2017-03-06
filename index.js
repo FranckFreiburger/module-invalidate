@@ -9,14 +9,27 @@ const invalidateCallbacksSym = Symbol();
 const validateCallbacksSym = Symbol();
 
 function toPrimitive(value) {
-	
+
 	var valueToPrimitive = value[Symbol.toPrimitive];
-	if ( valueToPrimitive !== undefined )
+	if ( typeof(valueToPrimitive) === 'function' )
 		return valueToPrimitive;
 	
 	return function(hint) {
 		
-		return hint === 'number' ? +value : ''+value;
+		if ( hint === 'number' )
+			return Number(value);
+		if ( hint === 'string' )
+			return String(value);
+
+		if ( typeof(value) === 'object' ) {
+			
+			var val = value.valueOf();
+			if ( typeof(val) === 'object' )
+				return String(val);
+			return val;
+		}
+		
+		return value;
 	}
 }
 
