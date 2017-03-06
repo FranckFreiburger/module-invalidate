@@ -16,6 +16,13 @@ function identityFct(value) {
 	}
 }
 
+function hasInstance(ctor) {
+	return function(instance) {
+		
+		return instance instanceof ctor;	
+	}
+}
+
 function bindSetProto(fct, value) {
 
 	function bound() {
@@ -140,6 +147,9 @@ function createProxy(mod) {
 			
 			mod._exports === null && reload(mod);
 			
+			if ( property === Symbol.hasInstance )
+				return hasInstance(mod._exports);
+			else
 			if ( property === Symbol.toPrimitive )
 				return identityFct(mod._exports);
 			
@@ -239,7 +249,7 @@ Module.prototype.unload = function() {
 
 	delete Module._cache[this.filename];
 	
-	// remove this module from all module children	
+	// remove this module from all module children
 	for ( var filename in Module._cache ) {
 		 
 		var children = Module._cache[filename].children;

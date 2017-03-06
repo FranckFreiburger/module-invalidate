@@ -61,8 +61,28 @@ describe('exports', function() {
 				}
 			}
 		`);
-		
 		assert.equal(new mod.module.exports().getValue(), 123);
+		module.constructor.invalidateByExports(mod.module.exports);
+		assert.equal(new mod.module.exports().getValue(), 123);
+	});
+
+
+	it('exports type constructor instanceof', function() {
+		
+		var mod = new utils.TmpModule(`
+			module.invalidable = true;
+			module.exports = class {}
+		`);
+
+		assert.equal(new mod.module.exports() instanceof mod.module.exports, true);
+		
+		var instance = new mod.module.exports();
+		
+		module.constructor.invalidateByExports(mod.module.exports);
+		
+		assert.equal(instance instanceof mod.module.exports, false);
+		
+		assert.equal(new mod.module.exports() instanceof mod.module.exports, true);
 	});
 	
 	
