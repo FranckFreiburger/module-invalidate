@@ -6,7 +6,7 @@ require('../index.js');
 describe('exports', function() {
 
 	
-	it('non-invalidable exports type', function() {
+	it('non-invalidable exports object type', function() {
 		
 		var mod = new utils.TmpModule(`
 			module.exports = {}
@@ -17,6 +17,20 @@ describe('exports', function() {
 		mod.module.invalidate();
 
 		assert.equal(typeof mod.module.exports, 'object');
+	});
+
+
+	it('non-invalidable exports function type', function() {
+		
+		var mod = new utils.TmpModule(`
+			module.exports = function(){}
+		`);
+		
+		assert.equal(typeof mod.module.exports, 'function');
+		
+		mod.module.invalidate();
+
+		assert.equal(typeof mod.module.exports, 'function');
 	});
 
 
@@ -43,6 +57,7 @@ describe('exports', function() {
 				foo: 'bar'
 			}
 		`);
+		
 		assert.equal(mod.module.exports.foo, 'bar');
 
 		mod.module.invalidate();
@@ -81,6 +96,7 @@ describe('exports', function() {
 				}
 			}
 		`);
+		
 		assert.equal(new mod.module.exports().getValue(), 123);
 		
 		module.constructor.invalidateByExports(mod.module.exports);
@@ -258,9 +274,7 @@ describe('exports', function() {
 				this.foo = function() {
 					
 					return this.bar;
-					
 				}
-				
 			}
 			module.exports = new ctor;
 		`);
@@ -412,9 +426,48 @@ describe('exports', function() {
 		mod.module.invalidate();
 
 		assert.equal(mod.module.exports, 2);
-		
-		//assert.throws(function() { mod.module.exports.toString() }, TypeError);
 	});
 	
+	it('defined toString()', function() {
+
+		var mod = new utils.TmpModule(`
+			module.invalidable = true;
+			module.exports = {
+				toString: function() {
+					
+					return '123';
+				}
+			}
+		`);
+		
+		assert.equal(''+mod.module.exports, '123');
+		assert.equal(+mod.module.exports, 123);
+		
+		mod.module.invalidate();
+
+		assert.equal(''+mod.module.exports, '123');
+		assert.equal(+mod.module.exports, 123);
+	});
 	
+
+	it('implicit valueOf()', function() {
+
+		var mod = new utils.TmpModule(`
+			module.invalidable = true;
+			module.exports = {
+				valueOf: function() {
+					
+					return 123;
+				}
+			}
+		`);
+		
+		assert.equal(+mod.module.exports, 123);
+		
+		mod.module.invalidate();
+
+		assert.equal(+mod.module.exports, 123);
+	});
+
+
 });

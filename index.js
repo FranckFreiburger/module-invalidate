@@ -8,11 +8,15 @@ const boundCachedSym = Symbol();
 const invalidateCallbacksSym = Symbol();
 const validateCallbacksSym = Symbol();
 
-function identityFct(value) {
+function toPrimitive(value) {
 	
-	return function() {
+	var valueToPrimitive = value[Symbol.toPrimitive];
+	if ( valueToPrimitive !== undefined )
+		return valueToPrimitive;
+	
+	return function(hint) {
 		
-		return value;	
+		return hint === 'number' ? +value : value.toString();
 	}
 }
 
@@ -150,9 +154,8 @@ function createProxy(mod) {
 			
 			if ( property === Symbol.hasInstance )
 				return hasInstance(mod._exports);
-			else
 			if ( property === Symbol.toPrimitive )
-				return identityFct(mod._exports);
+				return toPrimitive(mod._exports);
 			
 			// see http://stackoverflow.com/questions/42496414/illegal-invocation-error-using-es6-proxy-and-node-js
 			// see https://github.com/nodejs/node/issues/11629 (Illegal invocation error using ES6 Proxy and node.js)
