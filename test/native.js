@@ -12,6 +12,8 @@ describe('native module', function() {
 		`);
 		
 		assert.equal(typeof mod.module.exports.cpus(), 'object');
+		mod.module.invalidate();
+		assert.equal(typeof mod.module.exports.cpus(), 'object');
 	});
 
 	it('os.cpus', function() {
@@ -21,6 +23,8 @@ describe('native module', function() {
 			module.exports = require('os');
 		`);
 		
+		assert.equal(typeof mod.module.exports.cpus(), 'object');
+		mod.module.invalidate();
 		assert.equal(typeof mod.module.exports.cpus(), 'object');
 	});
 
@@ -33,6 +37,8 @@ describe('native module', function() {
 		`);
 		
 		assert.equal(typeof mod.module.exports(), 'object');
+		mod.module.invalidate();
+		assert.equal(typeof mod.module.exports(), 'object');
 	});
 
 
@@ -44,19 +50,10 @@ describe('native module', function() {
 		`);
 		
 		assert.equal(typeof mod.module.exports(), 'string');
+		mod.module.invalidate();
+		assert.equal(typeof mod.module.exports(), 'string');
 	});
 
-
-
-	it('lib ffi', function() {
-		
-		var ffi = require('ffi');
-		var libm = new ffi.Library('msvcrt', {
-			'ceil': [ 'double', [ 'double' ] ]
-		});
-		assert.equal(libm.ceil(1.1), 2);
-	});
-	
 
 	it('Function::bind', function() {
 
@@ -66,6 +63,9 @@ describe('native module', function() {
 			module.exports.foo = 123;
 		`);
 		
+		assert.equal(typeof mod.module.exports, 'function');
+		assert.equal(mod.module.exports(), 123);
+		mod.module.invalidate();
 		assert.equal(typeof mod.module.exports, 'function');
 		assert.equal(mod.module.exports(), 123);
 	});
