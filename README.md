@@ -226,18 +226,25 @@ var bar = foo.bar;
 In this case, `bar` will always refers to the initial `foo.bar` value. To avoid this, always refer `bar` using `foo.bar`.
 
 
-#### Module.invalidateByExports may invalidate several modules
+#### Module.invalidateByExports() may invalidate several modules
 
-Several modules may share the same `exports`
+Because several modules may share the same `exports`
 
 ##### Example:
 
 ###### module `./moduleA.js`
 `
-module.exports = require('./moduleB.js');
+module.invalidable = true;
+module.exports = {};
 `
 
-moduleA and moduleB share the same object, `invalidateByExports()` will invalidate both.
+###### module `./moduleB.js`
+`
+module.invalidable = true;
+module.exports = require('./moduleA.js');
+`
+
+moduleA and moduleB share the same object, `Module.invalidateByExports(moduleA)` will invalidate both.
 
 
 #### Invalidated modules will survive with the new child-module version
