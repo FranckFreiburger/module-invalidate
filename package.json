@@ -9,6 +9,7 @@
   "author": "Franck Freiburger",
   "license": "MIT",
   "devDependencies": {
+    "benchmark": "^2.1.3",
     "ffi": "^2.2.0",
     "mocha": "^3.2.0"
   },

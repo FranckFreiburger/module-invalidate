@@ -18,7 +18,10 @@ function identityFct(value) {
 
 function bindSetProto(fct, value) {
 
-	var bound = fct.bind(value);
+	function bound() {
+		
+		return fct.apply(value, arguments);
+	}
 	Object.setPrototypeOf(bound, fct); // see test "exports property on function"
 	return bound;
 }
