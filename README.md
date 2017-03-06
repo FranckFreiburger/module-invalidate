@@ -95,8 +95,6 @@ require('fs').unlinkSync(tmp_modulePath);
 ```
 
 
-
-
 ## API
 
 In the following API, `Module` refers to the Module constructor, available with `module.constructor` or `require('Module')`.  
@@ -132,7 +130,7 @@ module.invalidateByPath('./myModule.js');
 
 
 #### `Module.invalidateByExports(exports)`
-Invalidates the module by giving its exported object. The module should have been flagged as invalidable using `module.invalidable`.  
+Invalidates the module by giving its exported object. The module should have been flagged as invalidable using `module.invalidable`. Several modules may be affected.  
 
 ##### Example:
 ```JavaScript
@@ -141,44 +139,9 @@ var myModule = require('./myModule.js');
 module.constructor.invalidateByExports(myModule);
 ```
 
-`invalidateByExports()` only invalidates one module.
-###### module `B.js`
-```
-	module.invalidable = true;
-	console.log('load B');
-	module.exports = {
-		foo: 123
-	}
-```
-
-###### module `A.js`
-```
-	module.invalidable = true;
-	console.log('load A');
-	module.exports = require('./B.js');
-
-```
-
-###### main module `index.js`
-```
-	require('module-invalidate');
-	var a = require('./A.js');
-	console.log('invalidate');
-	module.constructor.invalidateByExports(a);
-	var tmp = a.foo;
-```	
-
-output:
-```	
-load A
-load B
-invalidate
-load A
-```	
-
 
 #### `Module.invalidate()`
-Invalidates all nodejs-non-internal modules. Only process modules that have been flagged as invalidable using `module.invalidable`.
+Invalidates all nodejs-non-internal invalidable modules. see `module.invalidable`.  
 
 ##### Example:
 ```JavaScript
@@ -204,7 +167,7 @@ Definitely unloads the module by its path (same syntax and context than `require
 
 
 #### `Module.unloadByExports(exports)`
-Definitely unloads the module by giving its exported object.
+Definitely unloads the module by giving its exported object. Several modules may be affected.  
 
 
 #### `module.onInvalidate(callback)`
@@ -246,18 +209,12 @@ module.onInvalidate(function(oldExports) {
 
 ## How it works
 
-1. `Module.prototype.exports` is overridden by a No-op forwarding ES6 Proxy that handle all accesses to module exports.
+1. `Module.prototype.exports` is overridden by a getter/setter that handle accesses to the module.
 1. When a module is invalidated, it is marked as *invalidated* and is then reloaded on the next access (lazily).
 
 
 
 ## Caveat
-
-#### `typeof module.exports` is always `'function'`
-
-Because the library is unable to know in advance what type of value will be assigned to `module.export`, it choose the most generic one as ES6 Proxy target.
-However, `(function(){}) instanceof Object === true`
-
 
 #### Only direct variable access is handled
 
@@ -267,6 +224,20 @@ var foo = require('foo.js');
 var bar = foo.bar;
 ```
 In this case, `bar` will always refers to the initial `foo.bar` value. To avoid this, always refer `bar` using `foo.bar`.
+
+
+#### Module.invalidateByExports may invalidate several modules
+
+Several modules may share the same `exports`
+
+##### Example:
+
+###### module `./moduleA.js`
+`
+module.exports = require('./moduleB.js');
+`
+
+moduleA and moduleB share the same object, `invalidateByExports()` will invalidate both.
 
 
 #### Invalidated modules will survive with the new child-module version

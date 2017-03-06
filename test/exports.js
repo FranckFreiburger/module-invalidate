@@ -41,11 +41,11 @@ describe('exports', function() {
 			module.exports = {}
 		`);
 
-		assert.equal(typeof mod.module.exports, 'function');
+		assert.equal(typeof mod.module.exports, 'object');
 
 		mod.module.invalidate();
 
-		assert.equal(typeof mod.module.exports, 'function');
+		assert.equal(typeof mod.module.exports, 'object');
 	});
 
 
@@ -186,7 +186,7 @@ describe('exports', function() {
 	});
 
 
-	xit('exports type void(0) primitive', function() {
+	it('exports type void(0) primitive', function() {
 		
 		var mod = new utils.TmpModule(`
 			module.invalidable = true;
@@ -199,7 +199,7 @@ describe('exports', function() {
 	});
 
 	
-	xit('exports type null', function() {
+	it('exports type null', function() {
 		
 		var mod = new utils.TmpModule(`
 			module.invalidable = true;

@@ -99,7 +99,7 @@ describe('API basic tests', function() {
 	});
 
 	
-	it('selective reload', function() {
+	it('non-selective reload', function() {
 
 		var mB = new utils.TmpModule(_ =>`
 			module.invalidable = true;
@@ -126,8 +126,8 @@ describe('API basic tests', function() {
 		assert.equal(mA.module.exports(), '0,2');
 		assert.equal(mA.module.exports(), '1,3');
 		mB.module.invalidate();
-		assert.equal(mA.module.exports(), '2,0');
-		assert.equal(mA.module.exports(), '3,1');
+		assert.equal(mA.module.exports(), '2,4');
+		assert.equal(mA.module.exports(), '3,5');
 	});
 	
 
@@ -169,7 +169,7 @@ describe('API basic tests', function() {
 	});
 	
 	
-	it('invalidateByExports unique', function() {
+	it('invalidateByExports non-unique', function() {
 		
 		global.report = '';
 		
@@ -193,13 +193,13 @@ describe('API basic tests', function() {
 		mA.module.exports.foo;
 		mB.module.exports.foo;
 		
-		assert.equal(global.report, 'aba');
+		assert.equal(global.report, 'abab');
 
 		module.constructor.invalidateByExports(mB.module.exports);
 		mA.module.exports.foo;
 		mB.module.exports.foo;
 		
-		assert.equal(global.report, 'abab');
+		assert.equal(global.report, 'ababab');
 
 		delete global.report;
 		
