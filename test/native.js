@@ -37,9 +37,9 @@ describe('native module', function() {
 			module.exports = require('os');
 		`);
 		
-		assert.equal(typeof mod.module.exports.userInfo(), 'string');
+		assert.equal(typeof mod.module.exports.userInfo(), 'object');
 		mod.module.invalidate();
-		assert.equal(typeof mod.module.exports.userInfo(), 'string');
+		assert.equal(typeof mod.module.exports.userInfo(), 'object');
 	});
 
 	it('process.platform', function() {

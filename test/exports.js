@@ -170,19 +170,6 @@ describe('exports', function() {
 	});
 
 
-	xit('exports type void(0) primitive', function() {
-		
-		var mod = new utils.TmpModule(`
-			module.invalidable = true;
-			module.exports = void(0);
-		`);
-		
-		assert.equal(mod.module.exports, void(0));
-		module.constructor.invalidateByExports(mod.module.exports);
-		assert.equal(mod.module.exports, void(0));
-	});
-
-
 	it('exports type null-prototype object', function() {
 		
 		var mod = new utils.TmpModule(`
@@ -196,6 +183,19 @@ describe('exports', function() {
 		mod.module.invalidate();
 		assert.equal(Object.getPrototypeOf(mod.module.exports), null);
 		assert.equal(mod.module.exports.foo, 123);
+	});
+
+
+	xit('exports type void(0) primitive', function() {
+		
+		var mod = new utils.TmpModule(`
+			module.invalidable = true;
+			module.exports = void(0);
+		`);
+		
+		assert.equal(mod.module.exports, void(0));
+		module.constructor.invalidateByExports(mod.module.exports);
+		assert.equal(mod.module.exports, void(0));
 	});
 
 	
