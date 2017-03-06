@@ -4,7 +4,7 @@ const Module = module.constructor;
 
 const invalidateCallbacksSym = Symbol();
 const validateCallbacksSym = Symbol();
-const invalid = Symbol();
+const invalidated = Symbol();
 
 
 Module.invalidate = function() {
@@ -44,7 +44,7 @@ Module.prototype.invalidate = function() {
 		this[invalidateCallbacksSym].clear();
 	}
 	
-	this._exports = invalid;
+	this._exports = invalidated;
 }
 
 Module.prototype.onInvalidate = function(callback) {
@@ -72,7 +72,7 @@ Module.prototype.invalidable = false;
 Object.defineProperty(Module.prototype, 'exports', {
 	get: function() {
 		
-		this._exports === invalid && reload(this);
+		this._exports === invalidated && reload(this);
 		return this._exports;
 	},
 	set: function(value) {
