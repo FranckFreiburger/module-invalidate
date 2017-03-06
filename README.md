@@ -273,7 +273,7 @@ module.onInvalidate(function(oldExports) {
 
 ## Caveat
 
-#### `typeof module.exports` is always 'function'
+#### `typeof module.exports` is always `'function'`
 
 Because the library is unable to know in advance what type of value will be assigned to `module.export`, it choose the most generic one as ES6 Proxy target.
 However, `(function(){}) instanceof Object === true`
