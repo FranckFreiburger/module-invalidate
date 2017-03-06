@@ -141,7 +141,7 @@ module.exports = {
 ```
 
 #### `module.invalidateByPath(path)`
-Invalidates the specified module by its path (same syntax and context than `require()`). The module should have been flagged as invalidable using `module.invaluable`.
+Invalidates the specified module by its path (same syntax and context than `require()`). The module should have been flagged as invalidable using `module.invalidable`.
 
 ##### Example:
 ```JavaScript
@@ -152,7 +152,7 @@ module.invalidateByPath('./myModule.js');
 
 
 #### `Module.invalidateByExports(exports)`
-Invalidates the module by giving its exported object. The module should have been flagged as invalidable using `module.invaluable`.  
+Invalidates the module by giving its exported object. The module should have been flagged as invalidable using `module.invalidable`.  
 
 ##### Example:
 ```JavaScript
@@ -198,7 +198,7 @@ load A
 
 
 #### `Module.invalidate()`
-Invalidates all nodejs-non-internal modules. Only process modules that have been flagged as invalidable using `module.invaluable`.
+Invalidates all nodejs-non-internal modules. Only process modules that have been flagged as invalidable using `module.invalidable`.
 
 ##### Example:
 ```JavaScript
@@ -208,7 +208,7 @@ module.constructor.invalidate();
 
 
 #### `module.invalidate()`
-Invalidates the module `module`. The module should have been flagged as invalidable using `module.invaluable`.
+Invalidates the module `module`. The module should have been flagged as invalidable using `module.invalidable`.
 
 ##### Example:
 ```JavaScript
@@ -230,7 +230,7 @@ Definitely unloads the module by giving its exported object.
 #### `module.onInvalidate(callback)`
 callback: `function(immutable_exports)`
 
-Register a callback that will be called when the module is invalidated. The `immutable_exports` is a permanent reference to the current module.exports .  
+Register a callback that will be called when the module is invalidated. The `immutable_exports` is a permanent reference to the current `module.exports`.  
 `onInvalidate` returns a function that unregisters the callback.
 
 Gives you the opportunity to free resources created in the module.  
