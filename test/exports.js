@@ -45,6 +45,25 @@ describe('exports', function() {
 		`);
 		assert.equal(mod.module.exports(), 'foo');
 	});
+
+	it('exports type constructor', function() {
+		
+		var mod = new utils.TmpModule(`
+			module.invalidable = true;
+			module.exports = class {
+				constructor() {
+					
+					this.value = 123;
+				}
+				getValue() {
+					
+					return this.value;
+				}
+			}
+		`);
+		
+		assert.equal(new mod.module.exports().getValue(), 123);
+	});
 	
 	
 	it('exports type Array', function() {
