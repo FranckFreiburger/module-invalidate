@@ -16,7 +16,7 @@ function toPrimitive(value) {
 	
 	return function(hint) {
 		
-		return hint === 'number' ? +value : value.toString();
+		return hint === 'number' ? +value : ''+value;
 	}
 }
 
