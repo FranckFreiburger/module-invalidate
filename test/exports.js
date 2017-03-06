@@ -11,6 +11,11 @@ describe('exports', function() {
 		var mod = new utils.TmpModule(`
 			module.exports = {}
 		`);
+		
+		assert.equal(typeof mod.module.exports, 'object');
+		
+		mod.module.invalidate();
+
 		assert.equal(typeof mod.module.exports, 'object');
 	});
 
@@ -21,6 +26,11 @@ describe('exports', function() {
 			module.invalidable = true;
 			module.exports = {}
 		`);
+
+		assert.equal(typeof mod.module.exports, 'function');
+
+		mod.module.invalidate();
+
 		assert.equal(typeof mod.module.exports, 'function');
 	});
 
@@ -34,6 +44,10 @@ describe('exports', function() {
 			}
 		`);
 		assert.equal(mod.module.exports.foo, 'bar');
+
+		mod.module.invalidate();
+
+		assert.equal(mod.module.exports.foo, 'bar');
 	});
 
 
@@ -43,8 +57,14 @@ describe('exports', function() {
 			module.invalidable = true;
 			module.exports = function() { return 'foo' }
 		`);
+
+		assert.equal(mod.module.exports(), 'foo');
+
+		mod.module.invalidate();
+
 		assert.equal(mod.module.exports(), 'foo');
 	});
+
 
 	it('exports type constructor', function() {
 		
@@ -62,7 +82,9 @@ describe('exports', function() {
 			}
 		`);
 		assert.equal(new mod.module.exports().getValue(), 123);
+		
 		module.constructor.invalidateByExports(mod.module.exports);
+		
 		assert.equal(new mod.module.exports().getValue(), 123);
 	});
 
@@ -92,6 +114,13 @@ describe('exports', function() {
 			module.invalidable = true;
 			module.exports = [1,2,3];
 		`);
+
+		assert.equal(mod.module.exports[1], 2);
+		assert.equal(mod.module.exports.length, 3);
+		assert.equal(typeof mod.module.exports.map, 'function');
+		
+		module.constructor.invalidateByExports(mod.module.exports);
+		
 		assert.equal(mod.module.exports[1], 2);
 		assert.equal(mod.module.exports.length, 3);
 		assert.equal(typeof mod.module.exports.map, 'function');
@@ -106,7 +135,8 @@ describe('exports', function() {
 		`);
 		
 		assert.equal(mod.module.exports, 'foo');
-		//assert.throws(function() { mod.module.exports.length }, /TypeError/);
+		module.constructor.invalidateByExports(mod.module.exports);
+		assert.equal(mod.module.exports, 'foo');
 	});
 
 
@@ -122,7 +152,9 @@ describe('exports', function() {
 
 		val = '456';
 		mod.set();
+		
 		mod.module.invalidate();
+		
 		assert.equal(mod.module.exports, 456);
 	});
 
@@ -168,6 +200,8 @@ describe('exports', function() {
 		`);
 
 		assert.equal(Object.keys(mod.module.exports).join(), 'a,b');
+		mod.module.invalidate();
+		assert.equal(Object.keys(mod.module.exports).join(), 'a,b');
 	});
 
 
@@ -182,6 +216,13 @@ describe('exports', function() {
 		for ( var prop in mod.module.exports )
 			res += prop + mod.module.exports[prop];
 		assert.equal(res, 'a1b2');
+		
+		mod.module.invalidate();
+		
+		for ( var prop in mod.module.exports )
+			res += prop + mod.module.exports[prop];
+		assert.equal(res, 'a1b2a1b2');
+		
 	});
 
 
@@ -197,6 +238,13 @@ describe('exports', function() {
 			val += v;
 
 		assert.equal(val, 6);
+		
+		mod.module.invalidate();
+
+		for ( var v of mod.module.exports )
+			val += v;
+
+		assert.equal(val, 12);
 	});
 
 
@@ -217,8 +265,56 @@ describe('exports', function() {
 			module.exports = new ctor;
 		`);
 		
-		//assert.equal(mod.module.exports.constructor.name, 'ctor');
+		assert.equal(mod.module.exports.constructor.name, 'ctor');
 		assert.equal(mod.module.exports.foo(), 123);
+
+		mod.module.invalidate();
+
+		assert.equal(mod.module.exports.constructor.name, 'ctor');
+		assert.equal(mod.module.exports.foo(), 123);
+	});
+
+	it('exports keep method name', function() {
+		
+		var mod = new utils.TmpModule(`
+			module.invalidable = true;
+			function ctor() {
+				
+				this.foo = function foo() {
+				}
+
+				this.bar = function() {
+				}
+			}
+			module.exports = new ctor;
+		`);
+		
+		assert.equal(mod.module.exports.constructor.name, 'ctor');
+		assert.equal(mod.module.exports.foo.name, 'foo');
+		assert.equal(mod.module.exports.bar.name, '');
+
+		mod.module.invalidate();
+
+		assert.equal(mod.module.exports.constructor.name, 'ctor');
+		assert.equal(mod.module.exports.foo.name, 'foo');
+		assert.equal(mod.module.exports.bar.name, '');
+	});
+	
+	
+	it('exports keep function name', function() {
+		
+		var mod = new utils.TmpModule(`
+			module.invalidable = true;
+			function myFct() {
+			}
+			module.exports = myFct;
+		`);
+		
+		assert.equal(mod.module.exports.name, 'myFct');
+
+		mod.module.invalidate();
+
+		assert.equal(mod.module.exports.name, 'myFct');
 	});
 	
 	
@@ -232,6 +328,12 @@ describe('exports', function() {
 			module.exports.foo = fct
 		`);
 		
+		assert.equal(typeof mod.module.exports.foo, 'function');
+		assert.equal(mod.module.exports.foo(), 123);
+		assert.equal(mod.module.exports.foo.bar, 456);
+		
+		mod.module.invalidate();
+
 		assert.equal(typeof mod.module.exports.foo, 'function');
 		assert.equal(mod.module.exports.foo(), 123);
 		assert.equal(mod.module.exports.foo.bar, 456);
@@ -249,6 +351,12 @@ describe('exports', function() {
 		assert.equal(typeof mod.module.exports.foo, 'function');
 		assert.equal(mod.module.exports.foo(), 123);
 		assert.equal(mod.module.exports.foo.bar, 456);
+		
+		mod.module.invalidate();
+
+		assert.equal(typeof mod.module.exports.foo, 'function');
+		assert.equal(mod.module.exports.foo(), 123);
+		assert.equal(mod.module.exports.foo.bar, 456);
 	});
 	
 	
@@ -261,7 +369,12 @@ describe('exports', function() {
 		`);
 		
 		assert.equal(typeof mod.module.exports.foo, 'function');
+		assert.equal(mod.module.exports.foo.bar, 456);
+		assert.equal(mod.module.exports.foo(), 123);
+		
+		mod.module.invalidate();
 
+		assert.equal(typeof mod.module.exports.foo, 'function');
 		assert.equal(mod.module.exports.foo.bar, 456);
 		assert.equal(mod.module.exports.foo(), 123);
 	});
