@@ -12,11 +12,13 @@ describe('exports', function() {
 			module.exports = {}
 		`);
 		
-		assert.equal(typeof mod.module.exports, 'object');
+		var exports = mod.module.exports;
+		
+		assert.equal(typeof exports, 'object');
 		
 		mod.module.invalidate();
 
-		assert.equal(typeof mod.module.exports, 'object');
+		assert.equal(typeof exports, 'object');
 	});
 
 
@@ -26,11 +28,13 @@ describe('exports', function() {
 			module.exports = function(){}
 		`);
 		
-		assert.equal(typeof mod.module.exports, 'function');
+		var exports = mod.module.exports;
+
+		assert.equal(typeof exports, 'function');
 		
 		mod.module.invalidate();
 
-		assert.equal(typeof mod.module.exports, 'function');
+		assert.equal(typeof exports, 'function');
 	});
 
 
@@ -41,11 +45,13 @@ describe('exports', function() {
 			module.exports = {}
 		`);
 
-		assert.equal(typeof mod.module.exports, 'function');
+		var exports = mod.module.exports;
+
+		assert.equal(typeof exports, 'function');
 
 		mod.module.invalidate();
 
-		assert.equal(typeof mod.module.exports, 'function');
+		assert.equal(typeof exports, 'function');
 	});
 
 
@@ -58,11 +64,13 @@ describe('exports', function() {
 			}
 		`);
 		
-		assert.equal(mod.module.exports.foo, 'bar');
+		var exports = mod.module.exports;
+
+		assert.equal(exports.foo, 'bar');
 
 		mod.module.invalidate();
 
-		assert.equal(mod.module.exports.foo, 'bar');
+		assert.equal(exports.foo, 'bar');
 	});
 
 
@@ -73,11 +81,13 @@ describe('exports', function() {
 			module.exports = function() { return 'foo' }
 		`);
 
-		assert.equal(mod.module.exports(), 'foo');
+		var exports = mod.module.exports;
+
+		assert.equal(exports(), 'foo');
 
 		mod.module.invalidate();
 
-		assert.equal(mod.module.exports(), 'foo');
+		assert.equal(exports(), 'foo');
 	});
 
 
@@ -97,11 +107,13 @@ describe('exports', function() {
 			}
 		`);
 		
-		assert.equal(new mod.module.exports().getValue(), 123);
+		var exports = mod.module.exports;
+
+		assert.equal(new exports().getValue(), 123);
 		
-		module.constructor.invalidateByExports(mod.module.exports);
+		module.constructor.invalidateByExports(exports);
 		
-		assert.equal(new mod.module.exports().getValue(), 123);
+		assert.equal(new exports().getValue(), 123);
 	});
 
 
@@ -112,15 +124,17 @@ describe('exports', function() {
 			module.exports = class {}
 		`);
 
-		assert.equal(new mod.module.exports() instanceof mod.module.exports, true);
+		var exports = mod.module.exports;
+
+		assert.equal(new exports() instanceof exports, true);
 		
-		var instance = new mod.module.exports();
+		var instance = new exports();
 		
-		module.constructor.invalidateByExports(mod.module.exports);
+		module.constructor.invalidateByExports(exports);
 		
-		assert.equal(instance instanceof mod.module.exports, false);
+		assert.equal(instance instanceof exports, false);
 		
-		assert.equal(new mod.module.exports() instanceof mod.module.exports, true);
+		assert.equal(new exports() instanceof exports, true);
 	});
 	
 	
@@ -131,15 +145,17 @@ describe('exports', function() {
 			module.exports = [1,2,3];
 		`);
 
-		assert.equal(mod.module.exports[1], 2);
-		assert.equal(mod.module.exports.length, 3);
-		assert.equal(typeof mod.module.exports.map, 'function');
+		var exports = mod.module.exports;
+
+		assert.equal(exports[1], 2);
+		assert.equal(exports.length, 3);
+		assert.equal(typeof exports.map, 'function');
 		
-		module.constructor.invalidateByExports(mod.module.exports);
+		module.constructor.invalidateByExports(exports);
 		
-		assert.equal(mod.module.exports[1], 2);
-		assert.equal(mod.module.exports.length, 3);
-		assert.equal(typeof mod.module.exports.map, 'function');
+		assert.equal(exports[1], 2);
+		assert.equal(exports.length, 3);
+		assert.equal(typeof exports.map, 'function');
 	});
 
 
@@ -151,9 +167,11 @@ describe('exports', function() {
 			module.exports = 'foo';
 		`);
 		
-		assert.equal(mod.module.exports, 'foo');
-		module.constructor.invalidateByExports(mod.module.exports);
-		assert.equal(mod.module.exports, 'foo');
+		var exports = mod.module.exports;
+
+		assert.equal(exports, 'foo');
+		module.constructor.invalidateByExports(exports);
+		assert.equal(exports, 'foo');
 	});
 
 
@@ -164,9 +182,11 @@ describe('exports', function() {
 			module.exports = true;
 		`);
 		
-		assert.equal(mod.module.exports, true);
-		module.constructor.invalidateByExports(mod.module.exports);
-		assert.equal(mod.module.exports, true);
+		var exports = mod.module.exports;
+
+		assert.equal(exports, true);
+		module.constructor.invalidateByExports(exports);
+		assert.equal(exports, true);
 	});
 
 
@@ -178,11 +198,13 @@ describe('exports', function() {
 			module.exports.foo = 123;
 		`);
 		
-		assert.equal(Object.getPrototypeOf(mod.module.exports), null);
-		assert.equal(mod.module.exports.foo, 123);
+		var exports = mod.module.exports;
+
+		assert.equal(Object.getPrototypeOf(exports), null);
+		assert.equal(exports.foo, 123);
 		mod.module.invalidate();
-		assert.equal(Object.getPrototypeOf(mod.module.exports), null);
-		assert.equal(mod.module.exports.foo, 123);
+		assert.equal(Object.getPrototypeOf(exports), null);
+		assert.equal(exports.foo, 123);
 	});
 
 
@@ -193,9 +215,11 @@ describe('exports', function() {
 			module.exports = void(0);
 		`);
 		
-		assert.equal(mod.module.exports, void(0));
-		module.constructor.invalidateByExports(mod.module.exports);
-		assert.equal(mod.module.exports, void(0));
+		var exports = mod.module.exports;
+
+		assert.equal(exports, void(0));
+		module.constructor.invalidateByExports(exports);
+		assert.equal(exports, void(0));
 	});
 
 	
@@ -206,9 +230,11 @@ describe('exports', function() {
 			module.exports = null;
 		`);
 		
-		assert.equal(mod.module.exports === null, true);
-		module.constructor.invalidateByExports(mod.module.exports);
-		assert.equal(mod.module.exports === null, true);
+		var exports = mod.module.exports;
+
+		assert.equal(exports === null, true);
+		module.constructor.invalidateByExports(exports);
+		assert.equal(exports === null, true);
 	});
 
 
@@ -220,14 +246,16 @@ describe('exports', function() {
 			module.exports = ${val};
 		`);
 		
-		assert.equal(mod.module.exports, 123);
+		var exports = mod.module.exports;
+
+		assert.equal(exports, 123);
 
 		val = '456';
 		mod.set();
 		
 		mod.module.invalidate();
 		
-		assert.equal(mod.module.exports, 456);
+		assert.equal(exports, 456);
 	});
 
 
@@ -239,11 +267,13 @@ describe('exports', function() {
 			module.exports = ${val};
 		`);
 		
-		assert.equal(mod.module.exports, 123);
+		var exports = mod.module.exports;
+
+		assert.equal(exports, 123);
 		val = '{ a:"bar" }';
 		mod.set();
 		mod.module.invalidate();
-		assert.equal(mod.module.exports.a, 'bar');
+		assert.equal(exports.a, 'bar');
 	});
 
 
@@ -255,12 +285,14 @@ describe('exports', function() {
 			module.exports = ${val};
 		`);
 		
-		assert.equal(mod.module.exports.a, 'bar');
+		var exports = mod.module.exports;
+
+		assert.equal(exports.a, 'bar');
 
 		val = '456';
 		mod.set();
 		mod.module.invalidate();
-		assert.equal(mod.module.exports, 456);
+		assert.equal(exports, 456);
 	});
 
 
@@ -271,9 +303,11 @@ describe('exports', function() {
 			module.exports = { a:1, b:2 };
 		`);
 
-		assert.equal(Object.keys(mod.module.exports).join(), 'a,b');
+		var exports = mod.module.exports;
+
+		assert.equal(Object.keys(exports).join(), 'a,b');
 		mod.module.invalidate();
-		assert.equal(Object.keys(mod.module.exports).join(), 'a,b');
+		assert.equal(Object.keys(exports).join(), 'a,b');
 	});
 
 
@@ -284,15 +318,17 @@ describe('exports', function() {
 			module.exports = { a:1, b:2 };
 		`);
 		
+		var exports = mod.module.exports;
+
 		var res = '';
-		for ( var prop in mod.module.exports )
-			res += prop + mod.module.exports[prop];
+		for ( var prop in exports )
+			res += prop + exports[prop];
 		assert.equal(res, 'a1b2');
 		
 		mod.module.invalidate();
 		
-		for ( var prop in mod.module.exports )
-			res += prop + mod.module.exports[prop];
+		for ( var prop in exports )
+			res += prop + exports[prop];
 		assert.equal(res, 'a1b2a1b2');
 		
 	});
@@ -305,15 +341,17 @@ describe('exports', function() {
 			module.exports = [1,2,3];
 		`);
 		
+		var exports = mod.module.exports;
+		
 		var val = 0;
-		for ( var v of mod.module.exports )
+		for ( var v of exports )
 			val += v;
 
 		assert.equal(val, 6);
 		
 		mod.module.invalidate();
 
-		for ( var v of mod.module.exports )
+		for ( var v of exports )
 			val += v;
 
 		assert.equal(val, 12);
@@ -335,13 +373,15 @@ describe('exports', function() {
 			module.exports = new ctor;
 		`);
 		
-		assert.equal(mod.module.exports.constructor.name, 'ctor');
-		assert.equal(mod.module.exports.foo(), 123);
+		var exports = mod.module.exports;
+		
+		assert.equal(exports.constructor.name, 'ctor');
+		assert.equal(exports.foo(), 123);
 
 		mod.module.invalidate();
 
-		assert.equal(mod.module.exports.constructor.name, 'ctor');
-		assert.equal(mod.module.exports.foo(), 123);
+		assert.equal(exports.constructor.name, 'ctor');
+		assert.equal(exports.foo(), 123);
 	});
 
 	it('exports keep method name', function() {
@@ -358,16 +398,18 @@ describe('exports', function() {
 			}
 			module.exports = new ctor;
 		`);
+
+		var exports = mod.module.exports;
 		
-		assert.equal(mod.module.exports.constructor.name, 'ctor');
-		assert.equal(mod.module.exports.foo.name, 'foo');
-		assert.equal(mod.module.exports.bar.name, '');
+		assert.equal(exports.constructor.name, 'ctor');
+		assert.equal(exports.foo.name, 'foo');
+		assert.equal(exports.bar.name, '');
 
 		mod.module.invalidate();
 
-		assert.equal(mod.module.exports.constructor.name, 'ctor');
-		assert.equal(mod.module.exports.foo.name, 'foo');
-		assert.equal(mod.module.exports.bar.name, '');
+		assert.equal(exports.constructor.name, 'ctor');
+		assert.equal(exports.foo.name, 'foo');
+		assert.equal(exports.bar.name, '');
 	});
 	
 	
@@ -379,12 +421,14 @@ describe('exports', function() {
 			}
 			module.exports = myFct;
 		`);
+
+		var exports = mod.module.exports;
 		
-		assert.equal(mod.module.exports.name, 'myFct');
+		assert.equal(exports.name, 'myFct');
 
 		mod.module.invalidate();
 
-		assert.equal(mod.module.exports.name, 'myFct');
+		assert.equal(exports.name, 'myFct');
 	});
 	
 	
@@ -397,16 +441,18 @@ describe('exports', function() {
 			fct.bar = 456;
 			module.exports.foo = fct
 		`);
+
+		var exports = mod.module.exports;
 		
-		assert.equal(typeof mod.module.exports.foo, 'function');
-		assert.equal(mod.module.exports.foo(), 123);
-		assert.equal(mod.module.exports.foo.bar, 456);
+		assert.equal(typeof exports.foo, 'function');
+		assert.equal(exports.foo(), 123);
+		assert.equal(exports.foo.bar, 456);
 		
 		mod.module.invalidate();
 
-		assert.equal(typeof mod.module.exports.foo, 'function');
-		assert.equal(mod.module.exports.foo(), 123);
-		assert.equal(mod.module.exports.foo.bar, 456);
+		assert.equal(typeof exports.foo, 'function');
+		assert.equal(exports.foo(), 123);
+		assert.equal(exports.foo.bar, 456);
 	});
 
 
@@ -425,12 +471,14 @@ describe('exports', function() {
 				}
 			}
 		`);
+
+		var exports = mod.module.exports;
 		
-		assert.equal(mod.module.exports.foo.bar, 456);
+		assert.equal(exports.foo.bar, 456);
 		mod.module.invalidate();
-		assert.equal(mod.module.exports.foo.bar, 456);
-		mod.module.exports.change();
-		assert.equal(mod.module.exports.foo.bar, 789);
+		assert.equal(exports.foo.bar, 456);
+		exports.change();
+		assert.equal(exports.foo.bar, 789);
 	});
 
 
@@ -450,12 +498,14 @@ describe('exports', function() {
 			}
 		`);
 		
-		assert.equal(mod.module.exports.foo.bar, 456);
-		mod.module.invalidate();
-		assert.equal(mod.module.exports.foo.bar, 456);
-		mod.module.exports.foo.bar = 789;
+		var exports = mod.module.exports;
 
-		assert.equal(mod.module.exports.check(), 789);
+		assert.equal(exports.foo.bar, 456);
+		mod.module.invalidate();
+		assert.equal(exports.foo.bar, 456);
+		exports.foo.bar = 789;
+
+		assert.equal(exports.check(), 789);
 	});
 
 	
@@ -467,15 +517,17 @@ describe('exports', function() {
 			module.exports.foo.bar = 456;
 		`);
 		
-		assert.equal(typeof mod.module.exports.foo, 'function');
-		assert.equal(mod.module.exports.foo(), 123);
-		assert.equal(mod.module.exports.foo.bar, 456);
+		var exports = mod.module.exports;
+		
+		assert.equal(typeof exports.foo, 'function');
+		assert.equal(exports.foo(), 123);
+		assert.equal(exports.foo.bar, 456);
 		
 		mod.module.invalidate();
 
-		assert.equal(typeof mod.module.exports.foo, 'function');
-		assert.equal(mod.module.exports.foo(), 123);
-		assert.equal(mod.module.exports.foo.bar, 456);
+		assert.equal(typeof exports.foo, 'function');
+		assert.equal(exports.foo(), 123);
+		assert.equal(exports.foo.bar, 456);
 	});
 	
 	
@@ -487,15 +539,17 @@ describe('exports', function() {
 			module.exports.foo.bar = 456;
 		`);
 		
-		assert.equal(typeof mod.module.exports.foo, 'function');
-		assert.equal(mod.module.exports.foo.bar, 456);
-		assert.equal(mod.module.exports.foo(), 123);
+		var exports = mod.module.exports;
+		
+		assert.equal(typeof exports.foo, 'function');
+		assert.equal(exports.foo.bar, 456);
+		assert.equal(exports.foo(), 123);
 		
 		mod.module.invalidate();
 
-		assert.equal(typeof mod.module.exports.foo, 'function');
-		assert.equal(mod.module.exports.foo.bar, 456);
-		assert.equal(mod.module.exports.foo(), 123);
+		assert.equal(typeof exports.foo, 'function');
+		assert.equal(exports.foo.bar, 456);
+		assert.equal(exports.foo(), 123);
 	});
 	
 	
@@ -507,13 +561,15 @@ describe('exports', function() {
 		
 		mod.module.invalidable = true;
 		
-		assert.equal(mod.module.exports.a, 1);
+		var exports = mod.module.exports;
+		
+		assert.equal(exports.a, 1);
 		
 		val++;
 		mod.set();
 		mod.module.invalidate();
 
-		assert.equal(mod.module.exports.a, 2);
+		assert.equal(exports.a, 2);
 	});
 
 
@@ -524,13 +580,15 @@ describe('exports', function() {
 		var mod = new utils.TmpModule(_ =>`${val}`, { ext: 'json' });
 		mod.module.invalidable = true;
 		
-		assert.equal(mod.module.exports, 1);
+		var exports = mod.module.exports;
+		
+		assert.equal(exports, 1);
 
 		val = '"foo"';
 		mod.set();
 		mod.module.invalidate();
 
-		assert.equal(mod.module.exports, 'foo');
+		assert.equal(exports, 'foo');
 	});
 	
 	it('defined toString()', function() {
@@ -544,14 +602,16 @@ describe('exports', function() {
 				}
 			}
 		`);
+
+		var exports = mod.module.exports;
 		
-		assert.equal(''+mod.module.exports, '123');
-		assert.equal(+mod.module.exports, 123);
+		assert.equal(''+exports, '123');
+		assert.equal(+exports, 123);
 		
 		mod.module.invalidate();
 
-		assert.equal(''+mod.module.exports, '123');
-		assert.equal(+mod.module.exports, 123);
+		assert.equal(''+exports, '123');
+		assert.equal(+exports, 123);
 	});
 	
 
@@ -566,12 +626,14 @@ describe('exports', function() {
 				}
 			}
 		`);
+
+		var exports = mod.module.exports;
 		
-		assert.equal(+mod.module.exports, 123);
+		assert.equal(+exports, 123);
 		
 		mod.module.invalidate();
 
-		assert.equal(+mod.module.exports, 123);
+		assert.equal(+exports, 123);
 	});
 
 
