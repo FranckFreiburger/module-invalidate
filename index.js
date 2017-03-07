@@ -12,7 +12,7 @@ const invalid = Symbol();
 function toPrimitive(value) {
 
 	var valueToPrimitive = value[Symbol.toPrimitive];
-	if ( valueToPrimitive) !== undefined )
+	if ( valueToPrimitive !== undefined )
 		return valueToPrimitive;
 	
 	return function(hint) {
