@@ -1,6 +1,6 @@
 {
   "name": "module-invalidate",
-  "version": "0.9.9",
+  "version": "0.9.8",
   "description": "invalidate required modules",
   "keywords": [
     "module",
