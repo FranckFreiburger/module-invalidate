@@ -12,7 +12,7 @@ const invalid = Symbol();
 function toPrimitive(value) {
 
 	var valueToPrimitive = value[Symbol.toPrimitive];
-	if ( typeof(valueToPrimitive) === 'function' )
+	if ( valueToPrimitive) !== undefined )
 		return valueToPrimitive;
 	
 	return function(hint) {
@@ -22,19 +22,19 @@ function toPrimitive(value) {
 		if ( hint === 'string' )
 			return String(value);
 
-		if ( typeof(value) === 'object' ) {
+		if ( typeof(value) !== 'object' && typeof(value) !== 'function' || value === null )
+			return value;
 			
-			var val = value.valueOf();
-			if ( typeof(val) === 'object' )
-				return String(val);
+		var val = value.valueOf();
+		if ( typeof(val) !== 'object' && typeof(val) !== 'function' || val === null )
 			return val;
-		}
 		
-		return value;
+		return String(value);
 	}
 }
 
 function hasInstance(ctor) {
+	
 	return function(instance) {
 		
 		return instance instanceof ctor;	
@@ -56,8 +56,7 @@ function bindSetProto(fct, value) {
 Module.invalidate = function() {
 	
 	for ( var filename in Module._cache )
-		if ( 'invalidate' in Module._cache[filename] )
-			Module._cache[filename].invalidate();
+		Module._cache[filename].invalidate();
 }
 
 Module.invalidateByExports = function(exports) {
@@ -203,8 +202,8 @@ function createProxy(mod) {
 		ownKeys: function(target) {
 			
 			mod._exports === invalid && reload(mod);
-			// see https://tc39.github.io/ecma262/#sec-invariants-of-the-essential-internal-methods
 			var ownKeys = Reflect.ownKeys(mod._exports);
+			// see https://tc39.github.io/ecma262/#sec-invariants-of-the-essential-internal-methods
 			if ( typeof mod._exports !== 'function' )
 				ownKeys.push('prototype');
 			return ownKeys;
