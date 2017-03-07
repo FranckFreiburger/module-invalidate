@@ -113,6 +113,17 @@ describe('native module', function() {
 		});
 	});
 	
+
+	it('exports Math', function() {
+
+		var mod = new utils.TmpModule(`
+			module.invalidable = true;
+			module.exports = Math;
+		`);
+		
+		assert.equal(mod.module.exports.cos(0), 1);
+	});
+	
 	
 	it('exports Math.cos to a property', function() {
 

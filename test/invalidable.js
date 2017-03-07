@@ -13,9 +13,11 @@ describe('invalidable', function() {
 			exports.count = function() { return count++; }
 		`);
 		
-		assert.equal(mod.module.exports.count(), 0);
+		var exports = mod.module.exports;
+		
+		assert.equal(exports.count(), 0);
 		module.invalidateByPath(mod.module.filename);
-		assert.equal(mod.module.exports.count(), 1);
+		assert.equal(exports.count(), 1);
 	});
 
 		
@@ -26,10 +28,12 @@ describe('invalidable', function() {
 			exports.count = function() { return count++; }
 		`);
 		
-		assert.equal(mod.module.exports.count(), 0);
 		mod.module.invalidable = true;
+
+		var exports = mod.module.exports;
+		
 		module.invalidateByPath(mod.module.filename);
-		assert.equal(mod.module.exports.count(), 0);
+		assert.equal(exports.count(), 0);
 	});
 	
 	
@@ -41,9 +45,11 @@ describe('invalidable', function() {
 			exports.count = function() { return count++; }
 		`);
 		
-		assert.equal(mod.module.exports.count(), 0);
+		var exports = mod.module.exports;
+		
+		assert.equal(exports.count(), 0);
 		module.invalidateByPath(mod.module.filename);
-		assert.equal(mod.module.exports.count(), 0);
+		assert.equal(exports.count(), 0);
 	});
 
 
@@ -55,9 +61,11 @@ describe('invalidable', function() {
 			module.invalidable = true;
 		`);
 		
-		assert.equal(mod.module.exports.count(), 0);
+		var exports = mod.module.exports;
+		
+		assert.equal(exports.count(), 0);
 		module.invalidateByPath(mod.module.filename);
-		assert.equal(mod.module.exports.count(), 0);
+		assert.equal(exports.count(), 0);
 	});
 	
 	
@@ -68,16 +76,40 @@ describe('invalidable', function() {
 			exports.count = function() { return count++; }
 		`);
 		
-		assert.equal(mod.module.exports.count(), 0);
+		
 		mod.module.invalidable = true;
+		var exports = mod.module.exports;
 		module.invalidateByPath(mod.module.filename);
-		assert.equal(mod.module.exports.count(), 0);
+		assert.equal(exports.count(), 0);
 		mod.module.invalidable = false;
 		module.invalidateByPath(mod.module.filename);
-		assert.equal(mod.module.exports.count(), 1);
+		assert.equal(exports.count(), 1);
 		mod.module.invalidable = true;
 		module.invalidateByPath(mod.module.filename);
-		assert.equal(mod.module.exports.count(), 0);
+		assert.equal(exports.count(), 0);
+	});
+
+
+	it('module invalidable after export', function() {
+		
+		var mod = new utils.TmpModule(`
+			var count = 0;
+			exports.count = function() { return count++; }
+		`);
+		
+		var exports = mod.module.exports;
+
+		mod.module.invalidable = true;
+		
+		assert.equal(exports.count(), 0);
+		
+		mod.module.invalidate();
+		
+		assert.equal(exports.count(), 1);
+		
+		exports = mod.module.exports;
+		
+		assert.equal(exports.count(), 0);
 	});
 
 	
