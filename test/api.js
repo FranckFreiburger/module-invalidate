@@ -13,6 +13,26 @@ describe('API basic tests', function() {
 	});
 
 
+	it('export proxy', function() {
+		
+		var foo = 1;
+		var mod = new utils.TmpModule().set(_ => `
+			module.invalidable = true;
+			module.exports = {
+				foo: ${foo}
+			}
+		`, { autoload: false });
+		
+		var exp = require(mod.module.filename);
+		
+		assert.equal(exp.foo, 1);
+		foo++;
+		mod.set();
+		module.invalidateByPath(mod.module.filename);
+		assert.equal(exp.foo, 2);
+	});
+
+
 	it('module.invalidateByPath()', function() {
 		
 		var foo = 1;
