@@ -314,8 +314,3 @@ Give me some [feedback](https://github.com/FranckFreiburger/module-invalidate/is
 ## Credits
 
 [Franck Freiburger](https://www.franck-freiburger.com)
-
-
-
-
-https://github.com/Automattic/wp-calypso/issues/new?labels[]=[Type]%20Bug&body=description:\nNode.js version:
