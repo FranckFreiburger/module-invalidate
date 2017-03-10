@@ -74,6 +74,25 @@ describe('exports', function() {
 	});
 
 
+	it('exports type Date', function() {
+		
+		var mod = new utils.TmpModule(`
+			module.invalidable = true;
+			module.exports = new Date();
+		`);
+		
+		var exports = mod.module.exports;
+
+		assert.strictEqual(exports.constructor, Date);
+		assert.equal(!isNaN(new Date(exports).getTime()), true);
+
+		mod.module.invalidate();
+
+		assert.strictEqual(exports.constructor, Date);
+		assert.equal(!isNaN(new Date(exports).getTime()), true);
+	});
+
+
 	it('exports type Function', function() {
 		
 		var mod = new utils.TmpModule(`
