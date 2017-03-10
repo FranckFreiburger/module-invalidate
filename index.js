@@ -9,6 +9,7 @@ const invalidateCallbacksSym = Symbol();
 const validateCallbacksSym = Symbol();
 const invalid = Symbol();
 
+// see https://tc39.github.io/ecma262/#sec-toprimitive
 function toPrimitive(value) {
 
 	var valueToPrimitive = value[Symbol.toPrimitive];
