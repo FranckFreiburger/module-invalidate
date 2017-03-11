@@ -308,7 +308,7 @@ child.foo = 2;
 
 ## How can you help?
 
-Give me some [feedback](https://github.com/FranckFreiburger/module-invalidate/issues/new?labels=question) and report [bugs](https://github.com/FranckFreiburger/module-invalidate/issues/new?labels=bug&body=Node.js%20version:%20%0Amodule-invalidate%20version:%20%0AIssue%20description:%20%0A).
+Give me some [feedback](https://github.com/FranckFreiburger/module-invalidate/issues/new?labels=feedback) and report [bugs](https://github.com/FranckFreiburger/module-invalidate/issues/new?labels=bug&body=Node.js%20version:%20%0Amodule-invalidate%20version:%20%0AIssue%20description:%20%0A).
 
 
 ## Credits
