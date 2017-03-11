@@ -256,8 +256,22 @@ module.onInvalidate(function(oldExports) {
 #### `typeof module.exports` is always `'function'`
 
 Because the library is unable to know in advance what type of value will be assigned to `module.export`, it choose the most generic one as ES6 Proxy target.
-However, `(function(){}) instanceof Object === true`
+However, `(function(){}) instanceof Object === true`.  
+As workaround, you can use `instanceof` against the `module.exports`, this will always retuns the expected result.
+##### Example:
 
+###### module `./myModule.js`
+```
+module.invalidable = true;
+module.exports = new Date;
+```
+
+###### main module `index.js`
+```
+require('module-invalidate');
+var myModule = require('./myModule.js');
+console.log(myModule instanceof Date); // true
+```
 
 #### Only direct variable access is handled
 
