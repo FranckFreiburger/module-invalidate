@@ -78,18 +78,22 @@ describe('exports', function() {
 		
 		var mod = new utils.TmpModule(`
 			module.invalidable = true;
-			module.exports = new Date();
+			module.exports = new Date;
 		`);
 		
 		var exports = mod.module.exports;
 
+		assert.equal(Object.keys(exports).length, 0);
 		assert.strictEqual(exports.constructor, Date);
-		assert.equal(!isNaN(new Date(exports).getTime()), true);
+		assert(exports instanceof Date);
+		assert(!isNaN(new Date(exports).getTime()));
 
 		mod.module.invalidate();
 
+		assert.equal(Object.keys(exports).length, 0);
 		assert.strictEqual(exports.constructor, Date);
-		assert.equal(!isNaN(new Date(exports).getTime()), true);
+		assert(exports instanceof Date);
+		assert(!isNaN(new Date(exports).getTime()));
 	});
 
 
