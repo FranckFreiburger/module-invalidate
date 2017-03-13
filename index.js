@@ -219,7 +219,7 @@ function createProxy(mod) {
 		construct: function(target, argumentsList, newTarget) {
 			
 			mod._exports === invalid && reload(mod);
-			return Reflect.construct(mod._exports, argumentsList, newTarget);
+			return Reflect.construct(mod._exports, argumentsList);
 		}
 	});
 }
