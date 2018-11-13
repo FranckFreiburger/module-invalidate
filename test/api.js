@@ -6,7 +6,7 @@ require('../index.js');
 describe('API basic tests', function() {
 
 	it('basic', function() {
-		
+
 		assert.strictEqual(require('module'), module.constructor);
 		assert.equal(typeof module.constructor._cache, 'object');
 		assert.equal(typeof module.constructor._pathCache, 'object');
@@ -14,7 +14,7 @@ describe('API basic tests', function() {
 
 
 	it('export proxy', function() {
-		
+
 		var foo = 1;
 		var mod = new utils.TmpModule().set(_ => `
 			module.invalidable = true;
@@ -22,9 +22,9 @@ describe('API basic tests', function() {
 				foo: ${foo}
 			}
 		`, { autoload: false });
-		
+
 		var exp = require(mod.module.filename);
-		
+
 		assert.equal(exp.foo, 1);
 		foo++;
 		mod.set();
@@ -34,7 +34,7 @@ describe('API basic tests', function() {
 
 
 	it('module.invalidateByPath()', function() {
-		
+
 		var foo = 1;
 		var mod = new utils.TmpModule().set(_ => `
 			module.invalidable = true;
@@ -42,7 +42,7 @@ describe('API basic tests', function() {
 				foo: ${foo}
 			}
 		`);
-		
+
 		assert.equal(mod.module.exports.foo, 1);
 		foo++;
 		mod.set();
@@ -50,19 +50,19 @@ describe('API basic tests', function() {
 		module.invalidateByPath(mod.module.filename);
 		assert.equal(mod.module.exports.foo, 2);
 	});
-	
-	
+
+
 	it('Module.invalidateByExports()', function() {
-		
+
 		var foo = 1;
-		
+
 		var mod = new utils.TmpModule().set(_ =>`
 			module.invalidable = true;
 			module.exports = {
 				foo: ${foo}
 			}
 		`);
-		
+
 		assert.equal(mod.module.exports.foo, 1);
 		foo++;
 		mod.set();
@@ -72,16 +72,16 @@ describe('API basic tests', function() {
 
 
 	it('module.invalidate()', function() {
-		
+
 		var foo = 1;
-		
+
 		var mod = new utils.TmpModule(_ =>`
 			module.invalidable = true;
 			module.exports = {
 				foo: ${foo}
 			}
 		`);
-		
+
 		assert.equal(mod.module.exports.foo, 1);
 		foo++;
 		mod.set();
@@ -91,9 +91,9 @@ describe('API basic tests', function() {
 
 
 	it('exports access level', function() {
-		
+
 		var count = 1;
-		
+
 		var mod = new utils.TmpModule(_ =>`
 			module.invalidable = true;
 			module.exports = {
@@ -106,10 +106,10 @@ describe('API basic tests', function() {
 		`);
 
 		var b = mod.module.exports.a.b;
-		
+
 		assert.equal(mod.module.exports.a.b.c, 1);
 		assert.equal(b.c, 1);
-		
+
 		count++;
 		mod.set();
 		mod.module.invalidate();
@@ -118,7 +118,7 @@ describe('API basic tests', function() {
 		assert.equal(b.c, 1);
 	});
 
-	
+
 	it('selective reload', function() {
 
 		var mB = new utils.TmpModule(_ =>`
@@ -139,7 +139,7 @@ describe('API basic tests', function() {
 				return (val++)+','+m();
 			}
 		`);
-		
+
 		assert.equal(mA.module.exports(), '0,0');
 		assert.equal(mA.module.exports(), '1,1');
 		mA.module.invalidate();
@@ -149,17 +149,17 @@ describe('API basic tests', function() {
 		assert.equal(mA.module.exports(), '2,0');
 		assert.equal(mA.module.exports(), '3,1');
 	});
-	
+
 
 	it('selective reload nested', function() {
-		
+
 		global.report = '';
-		
+
 		var mC = new utils.TmpModule(_ =>`
 			global.report += 'c';
 			module.invalidable = true;
 		`, { autoLoad: false });
-		
+
 		var mB = new utils.TmpModule(_ =>`
 			global.report += 'b';
 			module.invalidable = true;
@@ -171,28 +171,28 @@ describe('API basic tests', function() {
 			module.invalidable = true;
 			require(${utils.quoteString(mB.filename)});
 		`);
-		
+
 		mA.load();
-		
+
 		assert.equal(global.report, 'abc');
-		
+
 		mB.module.invalidate();
-		
+
 		mA.module.exports.foobar;
 		mB.module.exports.foobar;
 		mC.module.exports.foobar;
-		
+
 		assert.equal(global.report, 'abcb');
-		
+
 		delete global.report;
-		
+
 	});
-	
-	
+
+
 	it('invalidateByExports unique', function() {
-		
+
 		global.report = '';
-		
+
 		var mB = new utils.TmpModule(_ =>`
 			global.report += 'b';
 			module.invalidable = true;
@@ -204,27 +204,27 @@ describe('API basic tests', function() {
 			module.invalidable = true;
 			module.exports = require(${utils.quoteString(mB.filename)});
 		`);
-		
+
 		mA.load();
-		
+
 		assert.equal(global.report, 'ab');
-		
+
 		module.constructor.invalidateByExports(mA.module.exports);
 		mA.module.exports.foo;
 		mB.module.exports.foo;
-		
+
 		assert.equal(global.report, 'aba');
 
 		module.constructor.invalidateByExports(mB.module.exports);
 		mA.module.exports.foo;
 		mB.module.exports.foo;
-		
+
 		assert.equal(global.report, 'abab');
 
 		delete global.report;
-		
+
 	});
 
-	
+
 
 });
