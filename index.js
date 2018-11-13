@@ -171,11 +171,6 @@ function createProxy(mod) {
 			if ( property === Symbol.toPrimitive )
 				return toPrimitive(mod._exports);
 
-			// see http://stackoverflow.com/questions/42496414/illegal-invocation-error-using-es6-proxy-and-node-js
-			// see https://github.com/nodejs/node/issues/11629 (Illegal invocation error using ES6 Proxy and node.js)
-			// see http://stackoverflow.com/questions/42594682/how-to-determine-that-a-javascript-function-is-native-without-testing-native
-			// see V8 issue https://bugs.chromium.org/p/v8/issues/detail?id=5773
-
 			var val = Reflect.get(mod._exports, property);
 
 			if ( typeof(val) === 'function' && !('prototype' in val) ) { // native function has prototype === undefined

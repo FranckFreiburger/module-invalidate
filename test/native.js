@@ -18,7 +18,7 @@ describe('native module', function() {
 
 
 	// see V8 issue https://bugs.chromium.org/p/v8/issues/detail?id=5773
-	xit('os.cpus', function() {
+	it('os.cpus', function() {
 
 		var mod = new utils.TmpModule(`
 			module.invalidable = true;
@@ -30,7 +30,7 @@ describe('native module', function() {
 		assert.equal(typeof mod.module.exports.cpus(), 'object');
 	});
 
-	xit('os.userInfo', function() {
+	it('os.userInfo', function() {
 
 		var mod = new utils.TmpModule(`
 			module.invalidable = true;
