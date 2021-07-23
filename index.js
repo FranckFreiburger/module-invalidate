@@ -62,20 +62,22 @@ Module.invalidate = function() {
 
 Module.invalidateByExports = function(exports) {
 
-	for ( var filename in Module._cache )
-		if ( Module._cache[filename].exports === exports )
-			Module._cache[filename].invalidate();
+	for ( var filename in Module._cache ) {
+		if ( Module._cache[filename].exports === exports ) {
+			return Module._cache[filename].invalidate();
+		}
+	}
+	return false;
 }
 
 Module.prototype.invalidateByPath = function(path) {
-
-	Module._cache[Module._resolveFilename(path, this, this.parent === null)].invalidate();
+	return Module._cache[Module._resolveFilename(path, this, this.parent === null)].invalidate();
 }
 
 Module.prototype.invalidate = function() {
 
 	if ( !this.invalidable )
-		return;
+		return false;
 
 	if ( invalidateCallbacksSym in this ) {
 
@@ -91,6 +93,8 @@ Module.prototype.invalidate = function() {
 	}
 
 	this._exports = invalid;
+	
+	return true;
 }
 
 Module.prototype.onInvalidate = function(callback) {
